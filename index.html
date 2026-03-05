@@ -18,7 +18,7 @@
     /* ── FIXED BACKGROUND IMAGE ── */
     body {
       background: #e8560a;
-      background-image: url('bg.png');
+      background-image: url('bg.gif');
       background-size: cover;
       background-position: center center;
       background-attachment: fixed;
@@ -99,15 +99,14 @@
       /* Make the grid tall enough for 20 rows at a nice square aspect */
     }
 
-    .cell {
-      aspect-ratio: 1 / 1;
-      position: relative;
-      /* Transparent — background shows through */
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.55);
-      overflow: hidden;
-      transition: border-color 0.3s ease;
-    }
+.cell {
+  aspect-ratio: 1 / 1;
+  position: relative;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  overflow: visible;
+  padding: 6px;
+}
 
     /* When empty, completely see-through */
     .cell.empty { background: transparent; }
