@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECHO OF MIND — Dream to Pattern</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,400;1,900&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Anton&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --red:   #E8280B;
+  --green: #3D7A1F;
+  --acid:  #C8F000;
+  --ink:   #111;
+  --cream: #F5F0E8;
+  --lav:   #C4B5FD;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: #c8b89a;
+  color: var(--ink);
+  font-family: 'Space Mono', monospace;
+  cursor: none;
+  overflow-x: hidden;
+}
+
+/* ── CURSOR ── */
+#cursor {
+  position: fixed; width: 11px; height: 11px;
+  background: var(--red); border-radius: 50%;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%);
+  mix-blend-mode: multiply;
+}
+#cursor-ring {
+  position: fixed; width: 38px; height: 38px;
+  border: 1px solid rgba(232,40,11,0.5); border-radius: 50%;
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: left 0.09s ease, top 0.09s ease;
+}
+
+/* ── DECAY VEIL ── */
+#decay-veil {
+  position: fixed; inset: 0; pointer-events: none; z-index: 800;
+  opacity: 0; transition: opacity 5s ease;
+  backdrop-filter: blur(0px) saturate(100%);
+}
+#decay-veil.active {
+  opacity: 1;
+  backdrop-filter: blur(16px) saturate(20%) brightness(1.4);
+  transition: opacity 7s ease, backdrop-filter 10s ease;
+}
+#decay-msg {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  font-size: 8px; letter-spacing: 0.5em; text-transform: uppercase;
+  color: rgba(50,30,10,0.4); opacity: 0; pointer-events: none; z-index: 801;
+  transition: opacity 5s ease;
+}
+#decay-veil.active + #decay-msg { opacity: 1; }
+
+/* ── NAV — ref image 2 style: flat white strip, minimal ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 600;
+  height: 42px; display: flex; align-items: center;
+  justify-content: space-between; padding: 0 28px;
+  background: rgba(245,240,232,0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(0,0,0,0.12);
+}
+.nav-logo {
+  font-family: 'Anton', sans-serif; font-size: 13px;
+  letter-spacing: 0.2em; color: #111;
+}
+.nav-links { display: flex; }
+.nav-links a {
+  display: block; padding: 0 16px; height: 42px; line-height: 42px;
+  font-size: 8px; letter-spacing: 0.35em; text-transform: uppercase;
+  color: rgba(0,0,0,0.45); text-decoration: none;
+  border-left: 1px solid rgba(0,0,0,0.1);
+  transition: color 0.2s, background 0.2s;
+}
+.nav-links a:hover { color: var(--red); }
+
+/* TICKER — red strip like ref image 2 */
+.ticker-wrap {
+  position: fixed; top: 42px; left: 0; right: 0; z-index: 599;
+  height: 22px; overflow: hidden; background: var(--red);
+  display: flex; align-items: center;
+}
+.ticker-inner {
+  display: flex; white-space: nowrap;
+  animation: tick 22s linear infinite;
+}
+.ticker-inner span {
+  font-size: 7px; letter-spacing: 0.45em; text-transform: uppercase;
+  color: rgba(255,255,255,0.95); padding: 0 44px;
+}
+@keyframes tick { 0%{transform:translateX(0);} 100%{transform:translateX(-50%);} }
+
+/* ══════════════════════════════
+   § 1  HERO
+   ══════════════════════════════ */
+#hero {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* The fluid canvas fills the entire hero */
+#fluid-canvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  display: block;
+}
+
+/* type sits raw on top of the texture — ref image 1 */
+.hero-type {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  z-index: 10;
+  padding: 0 44px 56px;
+}
+
+.hero-eyebrow {
+  font-size: 8px; letter-spacing: 0.55em; text-transform: uppercase;
+  color: rgba(17,17,17,0.6); margin-bottom: 8px; display: block;
+  opacity: 0; animation: up 0.8s 0.3s forwards;
+}
+
+/* HUGE red italic serif slamming across the organic bg */
+.hero-h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(100px, 17vw, 240px);
+  font-weight: 900; font-style: italic;
+  line-height: 0.82; color: var(--red);
+  letter-spacing: -0.02em;
+  opacity: 0; animation: up 0.9s 0.4s cubic-bezier(0.16,1,0.3,1) forwards;
+  text-shadow: none;
+}
+.hero-h2 {
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(48px, 8vw, 116px);
+  line-height: 1; letter-spacing: 0.05em;
+  color: #111;
+  opacity: 0; animation: up 0.9s 0.55s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+
+.hero-bottom {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  margin-top: 28px;
+  opacity: 0; animation: fadeIn 1s 1s forwards;
+}
+.hero-sub {
+  font-size: 11px; line-height: 1.85; max-width: 360px;
+  color: rgba(17,17,17,0.65);
+}
+
+/* acid-green sticky note card — ref image 2 */
+.hero-sticky {
+  background: var(--acid);
+  padding: 18px 22px; max-width: 200px;
+  border: 1.5px solid rgba(0,0,0,0.15);
+  font-size: 9px; letter-spacing: 0.1em;
+  line-height: 1.7; color: #111;
+  transform: rotate(1.5deg);
+  box-shadow: 3px 4px 0 rgba(0,0,0,0.15);
+}
+.hero-sticky strong {
+  font-family: 'Anton', sans-serif; font-size: 13px;
+  display: block; margin-bottom: 4px; letter-spacing: 0.08em;
+}
+
+/* floating pill labels — ref image 3 style */
+.hero-pill {
+  position: absolute; z-index: 20;
+  padding: 8px 16px;
+  background: rgba(245,240,232,0.75);
+  border: 1px solid rgba(0,0,0,0.15);
+  backdrop-filter: blur(12px);
+  font-size: 8px; letter-spacing: 0.3em; text-transform: uppercase;
+  color: rgba(17,17,17,0.6);
+  animation: pillDrift 6s ease-in-out infinite alternate;
+}
+.hero-pill span {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: 18px; color: #111; display: block; margin-top: 2px;
+}
+.hp1 { top: 18%; right: 6%;  animation-delay: 0s; }
+.hp2 { top: 40%; right: 22%; animation-delay: 2s; }
+.hp3 { top: 62%; right: 5%;  animation-delay: 4s; }
+
+@keyframes up { from{opacity:0;transform:translateY(32px);}to{opacity:1;transform:translateY(0);} }
+@keyframes fadeIn { from{opacity:0;}to{opacity:1;} }
+@keyframes pillDrift {
+  from{transform:translateY(0) rotate(-0.5deg);}
+  to{transform:translateY(-12px) rotate(0.5deg);}
+}
+
+/* ══════════════════════════════
+   SECTION SHARED — organic bg continues
+   ══════════════════════════════ */
+section {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Each section gets its own fluid canvas layer */
+.section-fluid {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  opacity: 0.35; /* lighter for content sections */
+  pointer-events: none;
+}
+
+.section-inner {
+  position: relative; z-index: 2;
+  padding: 110px 48px 90px;
+}
+
+.s-label {
+  font-size: 8px; letter-spacing: 0.55em; text-transform: uppercase;
+  color: var(--red); margin-bottom: 10px; display: block;
+}
+.s-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(40px, 6vw, 88px);
+  font-weight: 900; font-style: italic; line-height: 0.95;
+  color: #111; margin-bottom: 48px;
+}
+
+/* ══════════════════════════════
+   § 2  TRIPLE THREAD
+   ══════════════════════════════ */
+#triple-thread { background: rgba(245,240,232,0.88); }
+
+.tt-header {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  margin-bottom: 52px;
+}
+.tt-note { font-size: 10px; line-height: 1.8; max-width: 280px; color: rgba(17,17,17,0.4); text-align: right; }
+
+.threads-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; }
+.tc {
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(4px);
+  padding: 36px 28px 28px;
+  border-top: 3px solid transparent;
+  position: relative; overflow: hidden;
+  transition: background 0.3s;
+}
+.tc:hover { background: rgba(255,255,255,0.85); }
+.tc.p1 { border-color: var(--red); }
+.tc.p2 { border-color: #FF6B00; }
+.tc.p3 { border-color: #2563EB; }
+.tc-num {
+  position: absolute; top: 12px; right: 18px;
+  font-family: 'Anton', sans-serif; font-size: 72px;
+  color: rgba(0,0,0,0.04); line-height: 1;
+}
+.tc-tag { font-size: 7px; letter-spacing: 0.5em; text-transform: uppercase; margin-bottom: 14px; display: block; }
+.tc.p1 .tc-tag { color: var(--red); }
+.tc.p2 .tc-tag { color: #FF6B00; }
+.tc.p3 .tc-tag { color: #2563EB; }
+.tc-name { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 900; margin-bottom: 12px; color: #111; }
+.tc-desc { font-size: 11px; line-height: 1.85; color: rgba(17,17,17,0.5); margin-bottom: 24px; }
+.tc-viz { width: 100%; height: 100px; border: 1px solid rgba(0,0,0,0.08); overflow: hidden; background: rgba(255,255,255,0.5); }
+.tc-viz svg { width: 100%; height: 100%; }
+.tc-foot { display: flex; justify-content: space-between; margin-top: 12px; font-size: 9px; color: rgba(17,17,17,0.3); }
+
+/* ══════════════════════════════
+   § 3  HALLUCINATION SLIDER
+   ══════════════════════════════ */
+#hallucination { background: rgba(200,240,0,0.12); }
+
+.hal-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 72px;
+  align-items: start; margin-top: 52px;
+}
+
+.hal-range-labels {
+  display: flex; justify-content: space-between;
+  font-size: 8px; letter-spacing: 0.3em; text-transform: uppercase;
+  color: rgba(17,17,17,0.35); margin-bottom: 10px;
+}
+#chaos-knob {
+  -webkit-appearance: none; width: 100%; height: 2px;
+  background: linear-gradient(to right, rgba(17,17,17,0.2), var(--red));
+  outline: none; cursor: none; margin-bottom: 32px;
+}
+#chaos-knob::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 20px; height: 20px;
+  background: var(--red); border-radius: 50%; cursor: none;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 8px rgba(232,40,11,0.4);
+}
+.temp-big {
+  font-family: 'Anton', sans-serif; font-size: 80px; line-height: 1;
+  color: rgba(17,17,17,0.07); margin-bottom: 4px;
+}
+.temp-big span { color: var(--red); font-size: 0.45em; }
+.dream-tabs { display: flex; gap: 4px; margin-bottom: 24px; flex-wrap: wrap; }
+.dream-tab {
+  padding: 6px 14px; border: 1px solid rgba(0,0,0,0.2);
+  background: transparent; color: rgba(17,17,17,0.4);
+  font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: 0.25em;
+  text-transform: uppercase; cursor: none; transition: all 0.25s;
+}
+.dream-tab.on { border-color: var(--red); color: var(--red); background: rgba(232,40,11,0.06); }
+.dream-tab:hover { border-color: var(--red); color: var(--red); }
+.hal-note { font-size: 10px; line-height: 1.8; color: rgba(17,17,17,0.4); }
+
+/* dream display box — ref image 3 floating card style */
+.hal-display {
+  background: rgba(255,255,255,0.72);
+  backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(0,0,0,0.1);
+  padding: 28px; min-height: 280px;
+  box-shadow: 4px 6px 0 rgba(0,0,0,0.08);
+}
+.hal-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 20px; font-size: 8px; letter-spacing: 0.4em;
+  text-transform: uppercase; color: rgba(17,17,17,0.3);
+  border-bottom: 1px solid rgba(0,0,0,0.07); padding-bottom: 12px;
+}
+.hal-blink { width: 6px; height: 6px; border-radius: 50%; background: var(--red); animation: blink 1.4s infinite; }
+@keyframes blink { 0%,100%{opacity:1;}50%{opacity:0;} }
+#dream-text { font-size: 13px; line-height: 1.95; color: rgba(17,17,17,0.8); white-space: pre-wrap; }
+
+/* ══════════════════════════════
+   § 4  REALITY ANCHOR
+   ══════════════════════════════ */
+#reality-anchor { background: rgba(245,240,232,0.9); }
+
+.ra-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 64px; align-items: center; margin-top: 52px; }
+
+/* Pi board — ref image 3 floating card aesthetic */
+.pi-card {
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(0,0,0,0.1);
+  padding: 8px;
+  box-shadow: 6px 8px 0 rgba(0,0,0,0.1);
+}
+.pi-svg { width: 100%; display: block; }
+
+.ra-title {
+  font-family: 'Playfair Display', serif; font-size: clamp(30px, 4vw, 56px);
+  font-weight: 900; font-style: italic; line-height: 1.05; margin-bottom: 6px; color: #111;
+}
+.ra-title em { color: var(--green); font-style: inherit; }
+.ra-sub { font-size: 8px; letter-spacing: 0.45em; text-transform: uppercase; color: rgba(17,17,17,0.3); margin-bottom: 24px; }
+.ra-desc { font-size: 11px; line-height: 1.85; color: rgba(17,17,17,0.5); margin-bottom: 36px; max-width: 420px; }
+
+.gpio-stack { display: flex; flex-direction: column; gap: 10px; }
+.gpio-row {
+  display: flex; gap: 14px; align-items: flex-start; padding: 18px;
+  background: rgba(255,255,255,0.6); border: 1.5px solid rgba(0,0,0,0.08);
+  cursor: none; transition: all 0.25s;
+}
+.gpio-row:hover { border-color: var(--green); background: rgba(255,255,255,0.9); box-shadow: 3px 3px 0 rgba(0,0,0,0.08); }
+.gpio-row.active { border-color: var(--green); background: rgba(200,240,0,0.15); }
+.gpio-pin-block { min-width: 52px; }
+.gpio-num { font-family: 'Anton', sans-serif; font-size: 30px; line-height: 1; }
+.g17c { color: var(--green); } .g27c { color: var(--red); }
+.gpio-tag { font-size: 7px; letter-spacing: 0.35em; text-transform: uppercase; color: rgba(0,0,0,0.25); }
+.gpio-fn { font-family: 'Playfair Display', serif; font-size: 17px; font-style: italic; margin-bottom: 2px; color: #111; }
+.gpio-spirit { font-size: 8px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--red); margin-bottom: 6px; }
+.gpio-desc { font-size: 10px; line-height: 1.7; color: rgba(17,17,17,0.4); }
+
+/* GPIO modal */
+#gpio-overlay {
+  position: fixed; inset: 0; z-index: 900; display: none;
+  align-items: center; justify-content: center;
+  background: rgba(245,240,232,0.7); backdrop-filter: blur(8px);
+}
+#gpio-overlay.on { display: flex; }
+.gpio-modal {
+  padding: 48px; max-width: 460px; width: 90%;
+  background: #fff; border: 1.5px solid #111;
+  box-shadow: 8px 8px 0 rgba(0,0,0,0.12);
+  animation: modalPop 0.25s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+@keyframes modalPop { from{transform:scale(0.92) translateY(12px);opacity:0;}to{transform:none;opacity:1;} }
+.modal-tag { font-size: 8px; letter-spacing: 0.45em; text-transform: uppercase; color: var(--green); margin-bottom: 14px; }
+.modal-title { font-family: 'Playfair Display', serif; font-size: 38px; font-style: italic; margin-bottom: 12px; color: #111; }
+.modal-text { font-size: 12px; line-height: 1.85; color: rgba(17,17,17,0.6); margin-bottom: 28px; }
+.modal-close {
+  font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: 0.4em;
+  text-transform: uppercase; color: rgba(17,17,17,0.4);
+  border: 1.5px solid rgba(0,0,0,0.2); padding: 10px 24px;
+  background: none; cursor: none; transition: all 0.2s;
+}
+.modal-close:hover { border-color: var(--red); color: var(--red); }
+
+/* ══════════════════════════════
+   § 5  COLLECTIVE ARCHIVE
+   ══════════════════════════════ */
+#collective-archive { background: rgba(220,215,255,0.25); }
+
+.ca-header {
+  display: grid; grid-template-columns: 1fr 1fr; align-items: end;
+  margin-bottom: 52px;
+}
+.ca-note { text-align: right; font-size: 10px; line-height: 1.85; color: rgba(17,17,17,0.4); }
+
+/* feed status */
+.feed-status-bar {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 36px;
+  padding: 11px 18px; border: 1.5px solid rgba(0,0,0,0.1);
+  background: rgba(255,255,255,0.6); width: fit-content;
+}
+.feed-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(0,0,0,0.2); transition: background 0.5s; }
+.feed-dot.live { background: var(--green); animation: blink 1.4s infinite; }
+.feed-dot.err  { background: var(--red); }
+.feed-status-text { font-size: 8px; letter-spacing: 0.4em; text-transform: uppercase; color: rgba(17,17,17,0.5); }
+.feed-url-disp { font-size: 9px; color: rgba(17,17,17,0.3); font-style: italic; }
+
+/* archive grid */
+.archive-grid {
+  display: none;
+  grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 3px;
+}
+.archive-card {
+  position: relative; aspect-ratio: 1; overflow: hidden;
+  background: rgba(255,255,255,0.4);
+  border: 1px solid rgba(0,0,0,0.08);
+  transition: box-shadow 0.3s;
+}
+.archive-card:hover { box-shadow: 6px 6px 0 rgba(0,0,0,0.12); z-index: 2; }
+.archive-card img { width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.5s cubic-bezier(0.16,1,0.3,1); }
+.archive-card:hover img { transform: scale(1.04); }
+.archive-card-overlay {
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(245,240,232,0.92) 0%,transparent 55%);
+  opacity:0;transition:opacity 0.35s;
+  display:flex;flex-direction:column;justify-content:flex-end;padding:18px;
+}
+.archive-card:hover .archive-card-overlay { opacity:1; }
+.ac-id { font-size:7px;letter-spacing:0.4em;text-transform:uppercase;color:rgba(17,17,17,0.4);margin-bottom:5px; }
+.ac-fragment { font-family:'Playfair Display',serif;font-size:13px;font-style:italic;line-height:1.5;color:#111;margin-bottom:8px; }
+.ac-meta { display:flex;justify-content:space-between;font-size:8px;color:rgba(17,17,17,0.35); }
+
+/* placeholder shimmer */
+.archive-placeholder {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 3px;
+}
+.ph-card {
+  aspect-ratio:1;
+  background: rgba(255,255,255,0.4);
+  border: 1px solid rgba(0,0,0,0.06);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:10px;text-align:center;padding:20px;
+  animation: phShimmer 3s ease-in-out infinite alternate;
+}
+.ph-card:nth-child(2n){animation-delay:0.8s;}
+.ph-card:nth-child(3n){animation-delay:1.6s;}
+@keyframes phShimmer {
+  from{background:rgba(255,255,255,0.35);}
+  to{background:rgba(255,255,255,0.65);}
+}
+.ph-icon { opacity:0.18; }
+.ph-label { font-size:8px;letter-spacing:0.4em;text-transform:uppercase;color:rgba(17,17,17,0.25); }
+.ph-id { font-family:'Playfair Display',serif;font-size:11px;font-style:italic;color:rgba(17,17,17,0.15); }
+
+/* offline box */
+.archive-offline {
+  display:none; padding:56px 36px; text-align:center;
+  border:1.5px solid rgba(0,0,0,0.1); background:rgba(255,255,255,0.5); margin-top:20px;
+}
+.offline-title { font-family:'Playfair Display',serif;font-size:36px;font-style:italic;color:rgba(17,17,17,0.2);margin-bottom:10px; }
+.offline-sub { font-size:9px;letter-spacing:0.35em;text-transform:uppercase;color:rgba(17,17,17,0.25);margin-bottom:28px; }
+.url-input-row { display:flex;gap:0;max-width:460px;margin:0 auto; }
+#pi-url-input {
+  flex:1;padding:12px 14px;
+  background:#fff;border:1.5px solid rgba(0,0,0,0.15);border-right:none;
+  color:#111;font-family:'Space Mono',monospace;font-size:11px;outline:none;
+}
+#pi-url-input:focus { border-color: var(--green); }
+#pi-connect-btn {
+  padding:12px 22px;background:var(--red);border:none;
+  color:#fff;font-family:'Anton',sans-serif;font-size:12px;letter-spacing:0.1em;
+  cursor:none;transition:background 0.2s;
+}
+#pi-connect-btn:hover { background:#111; }
+
+/* star map */
+#star-map-wrap {
+  width:100%;height:320px;margin-top:44px;
+  border:1.5px solid rgba(0,0,0,0.08);
+  background: rgba(220,215,255,0.3);
+  position:relative;overflow:hidden;
+}
+#star-canvas { position:absolute;inset:0;width:100%;height:100%; }
+.dream-node { position:absolute;transform:translate(-50%,-50%);cursor:none; }
+.node-dot {
+  width:8px;height:8px;border-radius:50%;
+  border:1.5px solid rgba(80,50,200,0.5);background:rgba(80,50,200,0.2);
+  transition:transform 0.3s,background 0.3s;
+  animation:nodePulse 3.5s ease-in-out infinite;
+}
+.dream-node:hover .node-dot { transform:scale(2.4);background:rgba(80,50,200,0.7); }
+@keyframes nodePulse {
+  0%,100%{box-shadow:0 0 0 0 rgba(80,50,200,0.3);}
+  50%{box-shadow:0 0 0 8px rgba(80,50,200,0);}
+}
+.node-tip {
+  position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
+  min-width:200px;padding:16px 18px;
+  background:rgba(255,255,255,0.92);border:1.5px solid rgba(0,0,0,0.1);
+  backdrop-filter:blur(8px);box-shadow:4px 4px 0 rgba(0,0,0,0.08);
+  opacity:0;pointer-events:none;transition:opacity 0.3s;white-space:nowrap;
+}
+.dream-node:hover .node-tip { opacity:1; }
+.nt-id { font-size:7px;letter-spacing:0.4em;color:rgba(17,17,17,0.35);margin-bottom:5px; }
+.nt-frag { font-family:'Playfair Display',serif;font-size:12px;font-style:italic;color:#111;line-height:1.6;margin-bottom:7px;white-space:normal; }
+.nt-meta { font-size:8px;color:rgba(17,17,17,0.35);display:flex;justify-content:space-between; }
+.archive-fn {
+  margin-top:24px;font-size:9px;letter-spacing:0.35em;text-transform:uppercase;
+  color:rgba(17,17,17,0.2);text-align:center;
+}
+
+/* ── FOOTER ── */
+footer {
+  padding:56px 48px;
+  background:rgba(245,240,232,0.95);
+  border-top:1.5px solid rgba(0,0,0,0.1);
+  display:flex;justify-content:space-between;align-items:flex-end;
+}
+.footer-mark { font-family:'Anton',sans-serif;font-size:52px;color:rgba(0,0,0,0.06);letter-spacing:0.08em;line-height:1; }
+.footer-right { text-align:right;font-size:9px;line-height:2.2;letter-spacing:0.3em;text-transform:uppercase;color:rgba(17,17,17,0.2); }
+.footer-right a { color:var(--green);text-decoration:none; }
+
+/* ── REVEAL ── */
+.reveal { opacity:0;transform:translateY(24px);transition:opacity 0.85s ease,transform 0.85s ease; }
+.reveal.visible { opacity:1;transform:none; }
+
+/* ── RESPONSIVE ── */
+@media(max-width:860px){
+  .threads-grid,.hal-grid,.ra-grid,.ca-header{grid-template-columns:1fr;}
+  .section-inner{padding:90px 24px 70px;}
+  nav{padding:0 18px;} .hero-type{padding:0 24px 44px;}
+  footer{flex-direction:column;gap:20px;}
+  .hero-pill{display:none;}
+}
+
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<div id="decay-veil"></div>
+<div id="decay-msg">dream fading — move to recall</div>
+
+<!-- GPIO MODAL -->
+<div id="gpio-overlay">
+  <div class="gpio-modal">
+    <div class="modal-tag" id="modal-tag"></div>
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-text" id="modal-text"></div>
+    <button class="modal-close" onclick="closeModal()">[ dismiss ]</button>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">ECHO OF MIND</div>
+  <div class="nav-links">
+    <a href="#triple-thread">Algorithm</a>
+    <a href="#hallucination">Interface</a>
+    <a href="#reality-anchor">Hardware</a>
+    <a href="#collective-archive">Archive</a>
+  </div>
+</nav>
+<div class="ticker-wrap">
+  <div class="ticker-inner">
+    <span>Subconscious Intimacy</span><span>Dream to Pattern</span><span>Triple-Thread Algorithm</span><span>Reality Anchor</span><span>Collective Archive</span><span>GPIO 17 — Record</span><span>GPIO 27 — Anchor</span><span>Raspberry Pi 4</span>
+    <span>Subconscious Intimacy</span><span>Dream to Pattern</span><span>Triple-Thread Algorithm</span><span>Reality Anchor</span><span>Collective Archive</span><span>GPIO 17 — Record</span><span>GPIO 27 — Anchor</span><span>Raspberry Pi 4</span>
+  </div>
+</div>
+
+<!-- ══ § 1 HERO ══ -->
+<section id="hero">
+  <canvas id="fluid-canvas"></canvas>
+
+  <div class="hero-pill hp1">
+    <span style="font-size:7px;letter-spacing:0.35em;display:block;margin-bottom:2px;">PILLAR I</span>
+    <span>Structure</span>
+  </div>
+  <div class="hero-pill hp2">
+    <span style="font-size:7px;letter-spacing:0.35em;display:block;margin-bottom:2px;">PILLAR II</span>
+    <span>Emotion</span>
+  </div>
+  <div class="hero-pill hp3">
+    <span style="font-size:7px;letter-spacing:0.35em;display:block;margin-bottom:2px;">PILLAR III</span>
+    <span>Space</span>
+  </div>
+
+  <div class="hero-type">
+    <span class="hero-eyebrow">Subconscious Intimacy — Phase I</span>
+    <div class="hero-h1">ECHO</div>
+    <div class="hero-h2">OF MIND</div>
+    <div class="hero-bottom">
+      <p class="hero-sub">A bridge between the internal subconscious and the external physical world. Speak your dream immediately upon waking. Watch it crystallise into pattern.</p>
+      <div class="hero-sticky">
+        <strong>DREAM→PATTERN</strong>
+        Triple-Thread<br>Algorithm<br>v0.1 active
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ § 2 TRIPLE THREAD ══ -->
+<section id="triple-thread">
+  <canvas class="section-fluid" id="tt-canvas"></canvas>
+  <div class="section-inner">
+    <div class="tt-header reveal">
+      <div>
+        <span class="s-label">The Triple-Thread Algorithm</span>
+        <div class="s-title">Three pillars.<br>One pattern.</div>
+      </div>
+      <div class="tt-note">The generation logic is built on three distinct pillars from the Dream-to-Pattern classification. Each pillar drives a separate visual variable.</div>
+    </div>
+    <div class="threads-grid">
+      <div class="tc p1 reveal">
+        <div class="tc-num">01</div>
+        <span class="tc-tag">Pillar I — Structure</span>
+        <div class="tc-name">Figurative Analysis</div>
+        <p class="tc-desc">Extracts the "what" of the dream. Drives line quality and density. High-detail dreams produce intricate motifs; abstract dreams produce fluid, broad shapes.</p>
+        <div class="tc-viz"><svg viewBox="0 0 300 100" id="p1-svg"></svg></div>
+        <div class="tc-foot"><span>LINE DENSITY</span><span id="p1-val">—</span></div>
+      </div>
+      <div class="tc p2 reveal">
+        <div class="tc-num">02</div>
+        <span class="tc-tag">Pillar II — Palette</span>
+        <div class="tc-name">Emotional Impact</div>
+        <p class="tc-desc">Analyses the "feeling" — fear, joy, confusion. Drives the colour palette. Nightmare maps to dark/red. Heavenly maps to soft/pastel/smooth.</p>
+        <div class="tc-viz"><svg viewBox="0 0 300 100" id="p2-svg"></svg></div>
+        <div class="tc-foot"><span>EMOTIONAL CHARGE</span><span id="p2-val">—</span></div>
+      </div>
+      <div class="tc p3 reveal">
+        <div class="tc-num">03</div>
+        <span class="tc-tag">Pillar III — Composition</span>
+        <div class="tc-name">Environmental Architecture</div>
+        <p class="tc-desc">Analyses the "where." Dictates layout and symmetry. Expansive landscapes produce radial open compositions; claustrophobic spaces produce dense geometries.</p>
+        <div class="tc-viz"><svg viewBox="0 0 300 100" id="p3-svg"></svg></div>
+        <div class="tc-foot"><span>SPATIAL INDEX</span><span id="p3-val">—</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ § 3 HALLUCINATION SLIDER ══ -->
+<section id="hallucination">
+  <canvas class="section-fluid" id="hal-canvas"></canvas>
+  <div class="section-inner">
+    <span class="s-label reveal">Interactive Demo</span>
+    <div class="s-title reveal">The Hallucination<br>Temperature</div>
+    <div class="hal-grid">
+      <div class="hal-controls reveal">
+        <div class="hal-range-labels"><span>Clinical</span><span>Hallucination</span></div>
+        <input type="range" id="chaos-knob" min="0" max="100" value="0">
+        <div class="temp-big" id="temp-big">000 <span>°H</span></div>
+        <div style="font-size:8px;letter-spacing:0.35em;text-transform:uppercase;color:rgba(17,17,17,0.3);margin-bottom:8px;">Select Dream</div>
+        <div class="dream-tabs">
+          <button class="dream-tab on" data-dream="0">Dream I</button>
+          <button class="dream-tab" data-dream="1">Dream II</button>
+          <button class="dream-tab" data-dream="2">Dream III</button>
+        </div>
+        <p class="hal-note">Drag the slider to modulate Hallucination Temperature. At 0°H the transcript reads as clinical data. At 100°H text fragments and dissolves into subconscious noise.</p>
+      </div>
+      <div class="hal-display reveal">
+        <div class="hal-bar"><span id="phase-label">CLINICAL MODE</span><div class="hal-blink"></div></div>
+        <div id="dream-text"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ § 4 REALITY ANCHOR ══ -->
+<section id="reality-anchor">
+  <canvas class="section-fluid" id="ra-canvas"></canvas>
+  <div class="section-inner">
+    <span class="s-label reveal">Hardware Documentation</span>
+    <div class="ra-grid">
+      <div class="pi-card reveal">
+        <svg class="pi-svg" viewBox="0 0 420 290" fill="none">
+          <rect x="4" y="4" width="412" height="282" rx="6" fill="#0d1a0d" stroke="rgba(61,122,31,0.3)" stroke-width="1"/>
+          <rect x="112" y="92" width="84" height="84" fill="#0a150a" stroke="rgba(61,122,31,0.4)" stroke-width="1"/>
+          <text x="154" y="136" font-family="Space Mono" font-size="7" fill="rgba(61,122,31,0.6)" text-anchor="middle">THE WEAVER</text>
+          <text x="154" y="148" font-family="Space Mono" font-size="5" fill="rgba(61,122,31,0.3)" text-anchor="middle">BCM2711</text>
+          <line x1="112" y1="107" x2="92" y2="107" stroke="rgba(61,122,31,0.2)" stroke-width="0.5"/>
+          <line x1="112" y1="122" x2="92" y2="122" stroke="rgba(61,122,31,0.2)" stroke-width="0.5"/>
+          <line x1="112" y1="137" x2="92" y2="137" stroke="rgba(61,122,31,0.2)" stroke-width="0.5"/>
+          <line x1="112" y1="152" x2="92" y2="152" stroke="rgba(61,122,31,0.2)" stroke-width="0.5"/>
+          <line x1="112" y1="167" x2="92" y2="167" stroke="rgba(61,122,31,0.2)" stroke-width="0.5"/>
+          <line x1="196" y1="107" x2="216" y2="107" stroke="rgba(61,122,31,0.2)" stroke-width="0.5"/>
+          <line x1="196" y1="122" x2="216" y2="122" stroke="rgba(61,122,31,0.2)" stroke-width="0.5"/>
+          <line x1="196" y1="137" x2="216" y2="137" stroke="rgba(61,122,31,0.2)" stroke-width="0.5"/>
+          <line x1="196" y1="152" x2="216" y2="152" stroke="rgba(61,122,31,0.2)" stroke-width="0.5"/>
+          <rect x="338" y="208" width="52" height="36" fill="#0a150a" stroke="rgba(61,122,31,0.25)" stroke-width="1"/>
+          <text x="364" y="226" font-family="Space Mono" font-size="5" fill="rgba(61,122,31,0.45)" text-anchor="middle">SUBCONSCIOUS</text>
+          <text x="364" y="236" font-family="Space Mono" font-size="5" fill="rgba(61,122,31,0.45)" text-anchor="middle">WELL</text>
+          <rect x="344" y="42" width="44" height="22" fill="#0a0a0a" stroke="rgba(61,122,31,0.15)" stroke-width="0.5"/>
+          <rect x="344" y="68" width="44" height="22" fill="#0a0a0a" stroke="rgba(61,122,31,0.15)" stroke-width="0.5"/>
+          <line x1="216" y1="134" x2="338" y2="134" stroke="rgba(61,122,31,0.08)" stroke-width="0.5"/>
+          <line x1="338" y1="134" x2="338" y2="208" stroke="rgba(61,122,31,0.08)" stroke-width="0.5"/>
+          <g onclick="triggerGPIO(17)" style="cursor:none;">
+            <circle cx="52" cy="72" r="18" fill="#0d1a0d" stroke="rgba(61,122,31,0.5)" stroke-width="1.5" id="g17c"/>
+            <text x="52" y="68" font-family="Anton" font-size="8" fill="rgba(61,122,31,0.85)" text-anchor="middle">GPIO</text>
+            <text x="52" y="79" font-family="Anton" font-size="8" fill="rgba(61,122,31,0.85)" text-anchor="middle">17</text>
+          </g>
+          <g onclick="triggerGPIO(27)" style="cursor:none;">
+            <circle cx="52" cy="194" r="18" fill="#1a0505" stroke="rgba(232,40,11,0.5)" stroke-width="1.5" id="g27c"/>
+            <text x="52" y="190" font-family="Anton" font-size="8" fill="rgba(232,40,11,0.85)" text-anchor="middle">GPIO</text>
+            <text x="52" y="201" font-family="Anton" font-size="8" fill="rgba(232,40,11,0.85)" text-anchor="middle">27</text>
+          </g>
+          <line x1="70" y1="72"  x2="112" y2="103" stroke="rgba(61,122,31,0.12)" stroke-width="0.5" stroke-dasharray="3,4"/>
+          <line x1="70" y1="194" x2="112" y2="173" stroke="rgba(232,40,11,0.12)" stroke-width="0.5" stroke-dasharray="3,4"/>
+          <text x="208" y="44" font-family="Space Mono" font-size="6" fill="rgba(61,122,31,0.3)" text-anchor="middle">RASPBERRY PI 4 MODEL B — REALITY ANCHOR UNIT</text>
+        </svg>
+      </div>
+      <div class="reveal">
+        <div class="ra-title">The <em>Sacred</em><br>Object</div>
+        <div class="ra-sub">Raspberry Pi 4 — Reality Anchor Unit</div>
+        <p class="ra-desc">The hardware is not peripheral — it is the altar. Two physical buttons mediate between the subconscious and the waking world. Click either pin to activate its function.</p>
+        <div class="gpio-stack">
+          <div class="gpio-row" id="gpio-17-row" onclick="triggerGPIO(17)">
+            <div class="gpio-pin-block"><div class="gpio-num g17c">17</div><div class="gpio-tag">GPIO</div></div>
+            <div><div class="gpio-fn">Start / Stop Recording</div><div class="gpio-spirit">The Weaver — Initiates Consciousness</div><div class="gpio-desc">Opens the system's ear to the subconscious stream. Press again to close and begin Triple-Thread analysis.</div></div>
+          </div>
+          <div class="gpio-row" id="gpio-27-row" onclick="triggerGPIO(27)">
+            <div class="gpio-pin-block"><div class="gpio-num g27c">27</div><div class="gpio-tag">GPIO</div></div>
+            <div><div class="gpio-fn">Reality Anchor Toggle</div><div class="gpio-spirit">The Mirror — Subconscious Glitch</div><div class="gpio-desc">Toggles between Raw Pattern and Simplified Anchor. In distressing states, press to ground. The screen shakes. Then clarifies.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ § 5 COLLECTIVE ARCHIVE ══ -->
+<section id="collective-archive">
+  <canvas class="section-fluid" id="ca-canvas"></canvas>
+  <div class="section-inner">
+    <div class="ca-header reveal">
+      <div>
+        <span class="s-label">The Collective Archive</span>
+        <div class="s-title">Every dream,<br>a coordinate.</div>
+      </div>
+      <div class="ca-note">Pattern images generated by the Raspberry Pi are broadcast live. Each image is a unique psychic fingerprint — unrepeatable, unfiltered, real.</div>
+    </div>
+    <div class="feed-status-bar reveal">
+      <div class="feed-dot" id="feed-dot"></div>
+      <div class="feed-status-text" id="feed-status-text">Awaiting Pi connection</div>
+      <div class="feed-url-disp" id="feed-url-disp">——</div>
+    </div>
+
+    <!--
+    ╔══════════════════════════════════════════════════╗
+    ║  CONNECT YOUR PI — change PI_FEED_URL in JS     ║
+    ║  e.g. const PI_FEED_URL = "http://192.168.1.42:5000" ║
+    ║  Pi should serve GET /feed → JSON:              ║
+    ║  { images: [{ url, id, emotion,                 ║
+    ║    density, fragment, timestamp }] }             ║
+    ╚══════════════════════════════════════════════════╝
+    -->
+
+    <div class="archive-grid" id="archive-grid"></div>
+    <div class="archive-placeholder reveal" id="archive-placeholder">
+      <div class="ph-card"><svg class="ph-icon" width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" stroke="#111" stroke-width="0.8"/><line x1="16" y1="2" x2="16" y2="30" stroke="#111" stroke-width="0.5"/><line x1="2" y1="16" x2="30" y2="16" stroke="#111" stroke-width="0.5"/></svg><div class="ph-label">Awaiting Pattern</div><div class="ph-id">DRF-????</div></div>
+      <div class="ph-card"><svg class="ph-icon" width="32" height="32" viewBox="0 0 32 32" fill="none"><rect x="2" y="2" width="28" height="28" stroke="#111" stroke-width="0.8"/><line x1="2" y1="16" x2="30" y2="16" stroke="#111" stroke-width="0.5"/><line x1="16" y1="2" x2="16" y2="30" stroke="#111" stroke-width="0.5"/></svg><div class="ph-label">Awaiting Pattern</div><div class="ph-id">DRF-????</div></div>
+      <div class="ph-card"><svg class="ph-icon" width="32" height="32" viewBox="0 0 32 32" fill="none"><polygon points="16,2 30,30 2,30" stroke="#111" stroke-width="0.8" fill="none"/></svg><div class="ph-label">Awaiting Pattern</div><div class="ph-id">DRF-????</div></div>
+      <div class="ph-card"><svg class="ph-icon" width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" stroke="#111" stroke-width="0.8" stroke-dasharray="3,3"/></svg><div class="ph-label">Awaiting Pattern</div><div class="ph-id">DRF-????</div></div>
+      <div class="ph-card"><svg class="ph-icon" width="32" height="32" viewBox="0 0 32 32" fill="none"><line x1="2" y1="2" x2="30" y2="30" stroke="#111" stroke-width="0.8"/><line x1="30" y1="2" x2="2" y2="30" stroke="#111" stroke-width="0.8"/></svg><div class="ph-label">Awaiting Pattern</div><div class="ph-id">DRF-????</div></div>
+      <div class="ph-card"><svg class="ph-icon" width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="8" stroke="#111" stroke-width="0.8"/><circle cx="16" cy="16" r="14" stroke="#111" stroke-width="0.5" stroke-dasharray="2,4"/></svg><div class="ph-label">Awaiting Pattern</div><div class="ph-id">DRF-????</div></div>
+      <div class="ph-card"><svg class="ph-icon" width="32" height="32" viewBox="0 0 32 32" fill="none"><rect x="7" y="7" width="18" height="18" stroke="#111" stroke-width="0.8" transform="rotate(45 16 16)"/></svg><div class="ph-label">Awaiting Pattern</div><div class="ph-id">DRF-????</div></div>
+      <div class="ph-card"><svg class="ph-icon" width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" stroke="#111" stroke-width="0.8"/><circle cx="16" cy="16" r="6" stroke="#111" stroke-width="0.8"/></svg><div class="ph-label">Awaiting Pattern</div><div class="ph-id">DRF-????</div></div>
+    </div>
+    <div class="archive-offline" id="archive-offline">
+      <div class="offline-title">Pi is sleeping.</div>
+      <div class="offline-sub">Paste your Raspberry Pi feed URL to populate the archive</div>
+      <div class="url-input-row">
+        <input type="text" id="pi-url-input" placeholder="http://192.168.x.x:5000">
+        <button id="pi-connect-btn" onclick="manualConnect()">CONNECT</button>
+      </div>
+    </div>
+    <div id="star-map-wrap" class="reveal">
+      <canvas id="star-canvas"></canvas>
+    </div>
+    <div class="archive-fn">↑ each node is a recorded dream — hover to surface the fragment</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-mark">ECHO<br>OF MIND</div>
+  <div class="footer-right">
+    <div>Subconscious Intimacy Project</div>
+    <div>Phase I — Visual Showcase</div>
+    <div style="margin-top:10px;">Raspberry Pi 4 · Hugging Face · Whisper</div>
+    <div><a href="https://github.com">GitHub ↗</a></div>
+  </div>
+</footer>
+
+<script>
+/* ══ PI FEED URL — SET THIS WHEN READY ══
+   const PI_FEED_URL = "http://192.168.1.42:5000";
+   ════════════════════════════════════════ */
+const PI_FEED_URL = null;
+const POLL_MS = 8000;
+
+/* ── CURSOR ── */
+const cur=document.getElementById('cursor'), ring=document.getElementById('cursor-ring');
+document.addEventListener('mousemove',e=>{ cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px';ring.style.left=e.clientX+'px';ring.style.top=e.clientY+'px';resetDecay(); });
+
+/* ── DECAY ── */
+const veil=document.getElementById('decay-veil');let dT;
+function resetDecay(){ clearTimeout(dT);veil.classList.remove('active');dT=setTimeout(()=>veil.classList.add('active'),10000); }
+resetDecay();
+
+/* ── SCROLL REVEAL ── */
+const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+/* ══════════════════════════════════════════════
+   FLUID CANVAS — oil/water microscopy simulation
+   ══════════════════════════════════════════════ */
+
+function createFluidPainter(canvas, palette, speed=1) {
+  const ctx = canvas.getContext('2d');
+  let t = Math.random() * 100;
+  let w, h;
+
+  function resize() {
+    w = canvas.offsetWidth; h = canvas.offsetHeight;
+    canvas.width = w; canvas.height = h;
+  }
+  resize();
+  new ResizeObserver(resize).observe(canvas);
+
+  // Blob definitions — mimics oil globules on water
+  function makeBlobs(count, cols) {
+    return Array.from({length: count}, (_, i) => ({
+      cx: Math.random(), cy: Math.random(),
+      rx: 0.08 + Math.random() * 0.22,
+      ry: 0.06 + Math.random() * 0.18,
+      vx: (Math.random() - 0.5) * 0.0008 * speed,
+      vy: (Math.random() - 0.5) * 0.0006 * speed,
+      rot: Math.random() * Math.PI * 2,
+      vr: (Math.random() - 0.5) * 0.003 * speed,
+      col: cols[i % cols.length],
+      alpha: 0.35 + Math.random() * 0.45,
+    }));
+  }
+
+  const blobs = makeBlobs(palette.count, palette.colors);
+
+  function draw() {
+    if (!w || !h) { requestAnimationFrame(draw); return; }
+    ctx.clearRect(0, 0, w, h);
+
+    // Base wash
+    ctx.fillStyle = palette.base;
+    ctx.fillRect(0, 0, w, h);
+
+    // Paint each blob as an ellipse gradient
+    blobs.forEach(b => {
+      b.cx += b.vx; b.cy += b.vy; b.rot += b.vr;
+      if (b.cx < -0.1) b.cx = 1.1;
+      if (b.cx > 1.1)  b.cx = -0.1;
+      if (b.cy < -0.1) b.cy = 1.1;
+      if (b.cy > 1.1)  b.cy = -0.1;
+
+      const bx = b.cx * w, by = b.cy * h;
+      const brx = b.rx * w, bry = b.ry * h;
+      const r = Math.max(brx, bry);
+
+      ctx.save();
+      ctx.translate(bx, by);
+      ctx.rotate(b.rot);
+      ctx.scale(brx / r, bry / r);
+
+      const g = ctx.createRadialGradient(0, 0, 0, 0, 0, r);
+      g.addColorStop(0,   b.col.replace('A)', `${b.alpha})`).replace('rgb(', 'rgba('));
+      g.addColorStop(0.6, b.col.replace('A)', `${b.alpha * 0.5})`).replace('rgb(', 'rgba('));
+      g.addColorStop(1,   'transparent');
+
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(0, 0, r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    });
+
+    // Noise/grain layer — gives organic texture
+    if (palette.grain) {
+      const id = ctx.createImageData(w, h);
+      const dd = id.data;
+      for (let i = 0; i < dd.length; i += 12) {
+        const v = Math.random() > 0.97 ? Math.floor(Math.random() * 40) : 0;
+        dd[i]=dd[i+1]=dd[i+2]=v; dd[i+3]=v ? 50 : 0;
+      }
+      ctx.putImageData(id, 0, 0);
+    }
+
+    // Bubble highlights — circles with specular sheen
+    if (palette.bubbles) {
+      for (let i = 0; i < 8; i++) {
+        const bx = (0.05 + Math.sin(t * 0.3 + i * 0.9) * 0.5 + 0.5 * Math.cos(t * 0.2 + i)) * w;
+        const by = (0.05 + Math.cos(t * 0.25 + i * 1.1) * 0.5 + 0.5 * Math.sin(t * 0.35 + i)) * h;
+        const br = 15 + Math.sin(t * 0.4 + i) * 8;
+        ctx.save();
+        ctx.beginPath(); ctx.arc(bx, by, br, 0, Math.PI * 2);
+        const bg = ctx.createRadialGradient(bx - br * 0.3, by - br * 0.3, 0, bx, by, br);
+        bg.addColorStop(0, 'rgba(255,255,255,0.55)');
+        bg.addColorStop(0.4, 'rgba(255,255,255,0.1)');
+        bg.addColorStop(1, 'rgba(255,255,255,0.05)');
+        ctx.fillStyle = bg;
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    t += 0.006 * speed;
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+/* ── HERO fluid — warm greens, yellows, ambers like ref image 1 ── */
+createFluidPainter(document.getElementById('fluid-canvas'), {
+  base: '#b8a882',
+  colors: [
+    'rgba(180,200,60,A)', // yellow-green
+    'rgba(90,160,40,A)',  // deep green
+    'rgba(200,180,60,A)', // golden yellow
+    'rgba(240,200,80,A)', // warm amber
+    'rgba(100,140,30,A)', // olive
+    'rgba(220,220,100,A)',// light chartreuse
+    'rgba(160,200,80,A)', // mid green
+    'rgba(60,100,20,A)',  // dark green
+  ],
+  count: 14, grain: true, bubbles: true
+}, 0.9);
+
+/* ── Section fluid canvases — lighter overlays ── */
+createFluidPainter(document.getElementById('tt-canvas'), {
+  base: 'rgba(245,240,232,0)',
+  colors: ['rgba(200,220,80,A)','rgba(150,200,60,A)','rgba(220,200,100,A)'],
+  count: 6, grain: false, bubbles: false
+}, 0.4);
+
+createFluidPainter(document.getElementById('hal-canvas'), {
+  base: 'rgba(200,240,0,0)',
+  colors: ['rgba(196,181,253,A)','rgba(184,245,208,A)','rgba(200,240,0,A)'],
+  count: 5, grain: false, bubbles: false
+}, 0.35);
+
+createFluidPainter(document.getElementById('ra-canvas'), {
+  base: 'rgba(245,240,232,0)',
+  colors: ['rgba(61,122,31,A)','rgba(100,180,60,A)','rgba(180,230,100,A)'],
+  count: 5, grain: false, bubbles: false
+}, 0.3);
+
+createFluidPainter(document.getElementById('ca-canvas'), {
+  base: 'rgba(220,215,255,0)',
+  colors: ['rgba(196,181,253,A)','rgba(232,40,11,A)','rgba(200,240,0,A)'],
+  count: 6, grain: false, bubbles: false
+}, 0.3);
+
+/* ── THREAD SVGs ── */
+let tp=0;
+function p1(v){ const n=Math.floor(4+v*14);let s='';for(let i=0;i<n;i++){const y=10+(i/n)*80,amp=(1-v)*16+3;let d=`M 0 ${y}`;for(let x=0;x<=300;x+=8)d+=` L ${x} ${(y+Math.sin(x*0.06+i)*amp).toFixed(1)}`;s+=`<path d="${d}" stroke="rgba(232,40,11,${(0.3+v*0.5).toFixed(2)})" stroke-width="0.8" fill="none"/>`;}document.getElementById('p1-svg').innerHTML=s;document.getElementById('p1-val').textContent=Math.round(v*100)+'%';}
+function p2(e){ const c=e>0.6?['#b05020','#d04010','#e86030']:e<0.4?['#8080d0','#60c090','#c0c040']:['#d08030','#e0a040','#c0c040'];let s='';for(let i=0;i<12;i++){const x=12+Math.random()*276,y=10+Math.random()*80,r=5+Math.random()*20;s+=`<circle cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${r.toFixed(0)}" fill="${c[i%3]}" opacity="${(0.2+Math.random()*0.4).toFixed(2)}"/>`;}document.getElementById('p2-svg').innerHTML=s;document.getElementById('p2-val').textContent=e>0.6?'FEAR':'JOY';}
+function p3(sp){ let s='';if(sp>0.55){for(let a=0;a<360;a+=18){const r=a*Math.PI/180,l=22+Math.random()*32*sp;s+=`<line x1="150" y1="50" x2="${(150+Math.cos(r)*l).toFixed(1)}" y2="${(50+Math.sin(r)*l).toFixed(1)}" stroke="rgba(37,99,235,0.45)" stroke-width="0.8"/>`;} s+=`<circle cx="150" cy="50" r="4" fill="rgba(37,99,235,0.5)"/>`;}else{for(let row=0;row<4;row++)for(let col=0;col<9;col++){const x=14+col*30,y=14+row*20,sz=3+(1-sp)*7;s+=`<rect x="${x}" y="${y}" width="${sz.toFixed(0)}" height="${sz.toFixed(0)}" fill="rgba(37,99,235,0.35)" rx="1"/>`;}}document.getElementById('p3-svg').innerHTML=s;document.getElementById('p3-val').textContent=sp>0.6?'EXPANSIVE':'COMPRESSED';}
+p1(0.5);p2(0.5);p3(0.5);
+setInterval(()=>{tp+=0.025;p1((Math.sin(tp)+1)/2);p2((Math.sin(tp*0.65+1)+1)/2);p3((Math.sin(tp*0.45+2)+1)/2);},900);
+
+/* ── HALLUCINATION SLIDER ── */
+const dreams=[
+  {clean:`I am walking through a corridor that has no end. The walls are covered in a material I cannot name — part tile, part skin. My footsteps produce no sound, but I can feel the vibration travelling up through my legs. There is a door at the far end. It is always the same distance away. I understand, with complete certainty, that someone is waiting behind it. The understanding does not frighten me. It simply is.`,chaos:[`I am walking ∞ corridor [tile/skin] no `,`footsteps — vibration — door always same`,`WAITING BEHIND — certainty — IT SIMPLY`,`fragments: tile | skin | vibration | door`,`IS // IS // IS → the understanding`,`dissolves into: corridor is me is door`]},
+  {clean:`The city spreads beneath me but I am not afraid of the height because in this dream height has been reclassified as something closer to warmth. Buildings rearrange themselves slowly, like chess pieces between moves. I know I have been here before. I know the exact moment I will wake up — it is the moment the tallest tower turns to look at me. I decide to enjoy what remains.`,chaos:[`city ↓↓↓ — HEIGHT = warmth reclassified`,`buildings — chess — slow rearrangement`,`BEEN HERE BEFORE — wake = tower turns`,`fragments: height | warmth | chess | tower`,`looks at me — I decide to enjoy`,`WHAT REMAINS // WHAT REMAINS`]},
+  {clean:`There is a body of water that I know to be a memory. It has the texture of memory — slightly out of focus at the edges, colours that shift when I try to name them. I am not swimming. I am simply in it, and it is simply me. Someone from my childhood stands at the shore but I cannot turn to see their face. When I try, the water becomes the colour of the attempt.`,chaos:[`water = MEMORY (texture: out-of-focus)`,`colours shift — cannot name — CANNOT`,`in it / it is me / simply // simply`,`fragments: focus | shore | face | attempt`,`childhood figure — turns — colour`,`OF THE ATTEMPT → water → memory → me`]}
+];
+let cd=0,halT=0;
+const knob=document.getElementById('chaos-knob'),tb=document.getElementById('temp-big'),dt=document.getElementById('dream-text'),pl=document.getElementById('phase-label');
+const G='∞∂∆∇◊⟐⊕⊗⋯∴∵⌘⎔⏣⚙⚡';
+function glyph(){return G[Math.floor(Math.random()*G.length)];}
+function renderDream(){
+  const d=dreams[cd],v=halT/100;
+  if(v<0.2){dt.textContent=d.clean;dt.style.cssText='font-size:13px;line-height:1.95;color:rgba(17,17,17,0.8);';pl.textContent='CLINICAL MODE — RAW TRANSCRIPT';}
+  else if(v<0.6){const lines=d.clean.split('. ').map((l,i)=>(i%2===0&&v>0.4)?d.chaos[i%d.chaos.length]:l);dt.textContent=lines.join('\n\n');dt.style.cssText='font-size:13px;line-height:1.95;color:rgba(17,17,17,0.7);font-style:italic;letter-spacing:0.04em;';pl.textContent=`TRANSITIONAL — ${Math.round(v*100)}°H`;}
+  else{const sh=(v-0.6)*10;const lines=d.chaos.map(l=>v>0.85?l.split('').map(c=>Math.random()>0.82?glyph():c).join(''):l);dt.textContent=lines.join('\n\n');dt.style.cssText=`font-size:13px;line-height:1.95;color:rgba(180,40,10,0.9);letter-spacing:${(v*0.2).toFixed(2)}em;transform:skewX(${((Math.random()-0.5)*sh).toFixed(1)}deg);filter:${v>0.85?`blur(${((v-0.85)*3).toFixed(1)}px)`:'none'};`;pl.textContent=`HALLUCINATION — ${Math.round(v*100)}°H`;}
+  tb.innerHTML=String(Math.round(v*100)).padStart(3,'0')+' <span>°H</span>';
+}
+knob.addEventListener('input',e=>{halT=parseInt(e.target.value);renderDream();});
+document.querySelectorAll('.dream-tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.dream-tab').forEach(x=>x.classList.remove('on'));b.classList.add('on');cd=parseInt(b.dataset.dream);renderDream();}));
+renderDream();
+
+/* ── GPIO ── */
+const gInfo={17:{tag:'GPIO 17 — ACTIVATED',title:'The Weaver',text:'Recording initiated. The system opens its ear to the subconscious stream. Speak your dream — every word is a coordinate in the pattern space. Press again to close and begin Triple-Thread analysis.'},27:{tag:'GPIO 27 — GLITCH STATE',title:'The Mirror',text:'Reality Anchor toggled. The raw pattern collapses into its simplified form. If the dream was distressing — breathe. The architecture has been grounded. The glitch is controlled. The screen steadies.'}};
+function triggerGPIO(pin){const d=gInfo[pin];document.getElementById('modal-tag').textContent=d.tag;document.getElementById('modal-title').textContent=d.title;document.getElementById('modal-text').textContent=d.text;document.getElementById('gpio-overlay').classList.add('on');const row=document.getElementById(`gpio-${pin}-row`);row&&row.classList.add('active');if(pin===27){let n=0;const iv=setInterval(()=>{document.body.style.transform=`translate(${(Math.random()-.5)*7}px,${(Math.random()-.5)*5}px)`;if(++n>9){clearInterval(iv);document.body.style.transform='';}},55);}setTimeout(()=>row&&row.classList.remove('active'),2200);}
+function closeModal(){document.getElementById('gpio-overlay').classList.remove('on');}
+
+/* ── COLLECTIVE ARCHIVE ── */
+const feedDot=document.getElementById('feed-dot'),feedTxt=document.getElementById('feed-status-text'),feedUrlD=document.getElementById('feed-url-disp');
+const archiveGrid=document.getElementById('archive-grid'),archivePH=document.getElementById('archive-placeholder'),archiveOff=document.getElementById('archive-offline');
+let activeFeedUrl=PI_FEED_URL,pollT=null,connected=false;
+function setStatus(s,url){if(s==='live'){feedDot.className='feed-dot live';feedTxt.textContent='Live feed — Pi connected';feedUrlD.textContent=url||'——';}else if(s==='err'){feedDot.className='feed-dot err';feedTxt.textContent='Connection error — retrying';feedUrlD.textContent=url||'——';}else{feedDot.className='feed-dot';feedTxt.textContent='Awaiting Pi connection';feedUrlD.textContent='——';}}
+function cardHTML(img){return `<div class="archive-card"><img src="${img.url}" alt="${img.id}" loading="lazy" onerror="this.style.display='none'"><div class="archive-card-overlay"><div class="ac-id">${img.id}${img.timestamp?' · '+img.timestamp:''}</div><div class="ac-fragment">${img.fragment||'—'}</div><div class="ac-meta"><span>${img.emotion||'—'}</span><span>density: ${img.density||'—'}</span></div></div></div>`;}
+async function pollFeed(){if(!activeFeedUrl)return;try{const r=await fetch(`${activeFeedUrl}/feed`,{signal:AbortSignal.timeout(5000)});if(!r.ok)throw new Error();const data=await r.json();if(!connected){connected=true;archivePH.style.display='none';archiveOff.style.display='none';archiveGrid.style.display='grid';}setStatus('live',activeFeedUrl);archiveGrid.innerHTML=(data.images||[]).map(cardHTML).join('');buildNodes((data.images||[]).map((img,i)=>({x:0.08+(i%5)*0.19+Math.random()*0.06,y:0.15+Math.floor(i/5)*0.5+Math.random()*0.18,id:img.id,fragment:img.fragment||'—',emotion:img.emotion||'—',density:img.density||'—'})));}catch(e){setStatus('err',activeFeedUrl);if(!connected)archiveOff.style.display='block';}}
+function startPoll(){if(pollT)clearInterval(pollT);pollFeed();pollT=setInterval(pollFeed,POLL_MS);}
+function manualConnect(){const u=document.getElementById('pi-url-input').value.trim();if(!u)return;activeFeedUrl=u.replace(/\/$/,'');setStatus('err',activeFeedUrl);startPoll();}
+if(activeFeedUrl)startPoll();else setStatus('offline');
+
+/* ── STAR MAP ── */
+const sc=document.getElementById('star-canvas'),sx=sc.getContext('2d');
+function resizeStar(){const wrap=document.getElementById('star-map-wrap');sc.width=wrap.offsetWidth;sc.height=wrap.offsetHeight;}
+resizeStar();window.addEventListener('resize',()=>{resizeStar();drawBg();});
+const pNodes=[
+  {x:0.12,y:0.28,id:'DRF-0001',fragment:'A staircase with no origin.\nEach step descended into warmth.',emotion:'Serene',density:'42%'},
+  {x:0.33,y:0.62,id:'DRF-0002',fragment:'The clock faces were mouths.\nI understood what they said.',emotion:'Uncanny',density:'78%'},
+  {x:0.54,y:0.18,id:'DRF-0003',fragment:'Flying — but the sky was a ceiling\nI could not reach.',emotion:'Frustration',density:'61%'},
+  {x:0.70,y:0.68,id:'DRF-0004',fragment:'Someone singing behind every\nclosed door simultaneously.',emotion:'Joy',density:'33%'},
+  {x:0.82,y:0.32,id:'DRF-0005',fragment:'The mirror showed a version of me\nthat waved first.',emotion:'Fear',density:'89%'},
+  {x:0.24,y:0.78,id:'DRF-0006',fragment:'A garden that grew inward, not\nupward. All roots visible.',emotion:'Awe',density:'55%'},
+  {x:0.60,y:0.82,id:'DRF-0007',fragment:'I was a library. Someone\nwas reading me aloud.',emotion:'Detachment',density:'70%'},
+  {x:0.44,y:0.44,id:'DRF-0008',fragment:'The ocean was above us.\nWe breathed it anyway.',emotion:'Transcendence',density:'48%'},
+  {x:0.88,y:0.72,id:'DRF-0009',fragment:'Numbers that felt like names.\nI knew all of them.',emotion:'Clarity',density:'91%'},
+  {x:0.08,y:0.54,id:'DRF-0010',fragment:'A city built from sleep.\nEvery building still dreaming.',emotion:'Wonder',density:'29%'},
+];
+function drawBg(){const w=sc.width,h=sc.height;sx.clearRect(0,0,w,h);sx.strokeStyle='rgba(80,50,200,0.07)';sx.lineWidth=0.5;pNodes.forEach((n,i)=>{if(!i)return;const prev=pNodes[i-1];sx.beginPath();sx.moveTo(prev.x*w,prev.y*h);sx.lineTo(n.x*w,n.y*h);sx.stroke();});}
+drawBg();
+function buildNodes(nodes){const wrap=document.getElementById('star-map-wrap');wrap.querySelectorAll('.dream-node').forEach(n=>n.remove());const w=wrap.offsetWidth,h=wrap.offsetHeight;nodes.forEach((n,i)=>{const el=document.createElement('div');el.className='dream-node';el.style.left=(n.x*w)+'px';el.style.top=(n.y*h)+'px';el.innerHTML=`<div class="node-dot" style="animation-delay:${i*0.3}s"></div><div class="node-tip"><div class="nt-id">${n.id}</div><div class="nt-frag">${n.fragment}</div><div class="nt-meta"><span>${n.emotion}</span><span>density: ${n.density}</span></div></div>`;wrap.appendChild(el);});}
+buildNodes(pNodes);
+</script>
+</body>
+</html>
