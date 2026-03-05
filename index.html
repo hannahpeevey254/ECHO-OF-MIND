@@ -346,50 +346,96 @@
     }
 
     // ─────────────────────────────
-    // LOCALHOST POLLING (every 3s)
-    // Your server at localhost:3000/latest returns:
-    // { seed: number, author: string, time: string, palette: string }
+    // PI IMAGE CAPTURE
+    // Polls http://172.20.10.2:5000/ every 4 seconds
+    // Fetches the image as a blob, converts to base64,
+    // compares to last captured image to detect changes,
+    // and adds to grid when a new image appears.
     // ─────────────────────────────
-    let lastSeen = null;
+    const PI_URL = 'http://172.20.10.2:5000/';
+    let lastImageData = null;
+    let isPolling = false;
 
-    async function poll() {
+    async function captureFromPi() {
+      if (isPolling) return;
+      isPolling = true;
       try {
-        const res  = await fetch('http://localhost:3000/latest', { cache: 'no-store' });
-        const data = await res.json();
-        if (data && data.seed && data.seed !== lastSeen) {
-          lastSeen = data.seed;
-          addDream(data);
-        }
-      } catch (_) { /* server not running yet — silent */ }
+        // Fetch image with cache-busting timestamp
+        const res = await fetch(PI_URL + '?t=' + Date.now(), {
+          cache: 'no-store',
+          mode: 'cors'
+        });
+
+        if (!res.ok) { isPolling = false; return; }
+
+        const blob = await res.blob();
+
+        // Only process if it's an image
+        if (!blob.type.startsWith('image/')) { isPolling = false; return; }
+
+        // Convert to base64 to compare + display
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64 = reader.result;
+
+          // Simple change detection — compare first 200 chars of base64
+          const fingerprint = base64.substring(0, 200);
+
+          if (fingerprint !== lastImageData) {
+            lastImageData = fingerprint;
+
+            // Add real image to grid
+            addRealImage(base64);
+
+            // Update status
+            document.getElementById('liveStatus').textContent =
+              'New dream captured — ' + new Date().toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+          }
+          isPolling = false;
+        };
+        reader.readAsDataURL(blob);
+
+      } catch (e) {
+        // Not on same network — show offline status
+        document.getElementById('liveStatus').textContent =
+          'Waiting — connect to same network as Pi';
+        isPolling = false;
+      }
     }
 
-    setInterval(poll, 3000);
+    // Add a real captured image (base64) into the next grid cell
+    function addRealImage(base64) {
+      if (filledCount >= TOTAL) return;
 
-    // ─────────────────────────────
-    // PUBLIC API
-    // From your localhost app call:
-    //   window.echoAddDream({ seed, author, time, palette })
-    // Or postMessage: { type:'echo-dream', seed, author, time, palette }
-    // ─────────────────────────────
-    window.echoAddDream = addDream;
-    window.addEventListener('message', e => {
-      if (e.data && e.data.type === 'echo-dream') addDream(e.data);
-    });
+      const cell = cells[filledCount];
+      const time = new Date().toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
 
-    // ─────────────────────────────
-    // DEMO FILL — remove once localhost is live
-    // ─────────────────────────────
-    const demo = [
-      { seed:11111, author:'A.M.',  time:'03:14', palette:'blue'   },
-      { seed:22222, author:'R.K.',  time:'05:22', palette:'red'    },
-      { seed:33333, author:'S.B.',  time:'02:08', palette:'violet' },
-      { seed:44444, author:'C.W.',  time:'04:45', palette:'green'  },
-      { seed:55555, author:'M.L.',  time:'03:30', palette:'warm'   },
-      { seed:66666, author:'J.O.',  time:'01:55', palette:'pink'   },
-      { seed:77777, author:'P.N.',  time:'06:12', palette:'teal'   },
-      { seed:88888, author:'I.F.',  time:'02:38', palette:'gold'   },
-    ];
-    demo.forEach((d, i) => setTimeout(() => addDream(d), i * 250));
+      // Create image element
+      const img = document.createElement('img');
+      img.src = base64;
+      img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;';
+
+      cell.insertBefore(img, cell.firstChild);
+
+      // Meta
+      const meta = cell.querySelector('.cell-meta');
+      meta.innerHTML = `
+        <span class="cell-author">Dream #${filledCount + 1}</span>
+        <span class="cell-time">${time}</span>
+      `;
+
+      cell.classList.remove('empty');
+      cell.classList.add('filled', 'just-added');
+      setTimeout(() => cell.classList.remove('just-added'), 700);
+
+      filledCount++;
+      document.getElementById('countLabel').textContent = filledCount + ' / ' + TOTAL;
+    }
+
+    // Start polling every 4 seconds
+    setInterval(captureFromPi, 4000);
+    // Also run immediately on load
+    captureFromPi();
   </script>
 </body>
 </html>
