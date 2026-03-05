@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Echo of Mind — Dream Intelligence</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* LANDING PAGE SPECIFIC */
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 120px 48px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.6rem;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--dream-blue);
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      opacity: 0;
+      animation: fadeUp 1s ease 0.3s forwards;
+    }
+
+    .hero-eyebrow::before {
+      content: '';
+      width: 40px;
+      height: 1px;
+      background: var(--dream-blue);
+    }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(4rem, 12vw, 11rem);
+      font-weight: 900;
+      line-height: 0.88;
+      letter-spacing: -0.02em;
+      margin-bottom: 48px;
+      opacity: 0;
+      animation: fadeUp 1.2s ease 0.5s forwards;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255,255,255,0.5);
+      display: block;
+    }
+
+    .hero-title .accent {
+      color: var(--dream-blue);
+      display: block;
+    }
+
+    .hero-sub {
+      max-width: 480px;
+      font-size: 0.75rem;
+      line-height: 1.9;
+      color: var(--text-muted);
+      margin-bottom: 64px;
+      opacity: 0;
+      animation: fadeUp 1s ease 0.8s forwards;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      opacity: 0;
+      animation: fadeUp 1s ease 1s forwards;
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 40px;
+      right: 48px;
+      font-size: 0.55rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      writing-mode: vertical-rl;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      opacity: 0;
+      animation: fadeUp 1s ease 1.5s forwards;
+    }
+
+    .hero-scroll::before {
+      content: '';
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, var(--dream-blue), transparent);
+    }
+
+    /* FLOATING VISUAL */
+    .hero-visual {
+      position: absolute;
+      right: -80px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 55vw;
+      height: 80vh;
+      opacity: 0;
+      animation: fadeIn 2s ease 1s forwards;
+    }
+
+    .dream-sphere {
+      position: absolute;
+      border-radius: 50%;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .sphere-1 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle at 35% 35%, var(--dream-blue), transparent 60%),
+                  radial-gradient(circle at 70% 70%, var(--dream-purple), transparent 50%);
+      top: 10%; left: 10%;
+      border: 1px solid rgba(110,198,245,0.2);
+      filter: blur(1px);
+    }
+
+    .sphere-2 {
+      width: 250px; height: 250px;
+      background: radial-gradient(circle at 40% 40%, var(--dream-green), transparent 60%),
+                  radial-gradient(circle at 75% 65%, var(--dream-yellow), transparent 50%);
+      top: 50%; left: 40%;
+      animation-delay: -2s;
+      filter: blur(0.5px);
+    }
+
+    .sphere-3 {
+      width: 180px; height: 180px;
+      background: radial-gradient(circle at 45% 45%, var(--dream-pink), transparent 60%);
+      top: 5%; left: 55%;
+      animation-delay: -4s;
+      filter: blur(0.5px);
+    }
+
+    .sphere-4 {
+      width: 120px; height: 120px;
+      background: radial-gradient(circle at 45% 45%, var(--dream-orange), transparent 60%);
+      top: 70%; left: 15%;
+      animation-delay: -1s;
+    }
+
+    /* Connecting lines between spheres */
+    .sphere-connection {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      33% { transform: translateY(-20px) rotate(2deg); }
+      66% { transform: translateY(10px) rotate(-1deg); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* MARQUEE SECTION */
+    .marquee-section {
+      padding: 0;
+      margin: 0;
+    }
+
+    /* ABOUT SECTION */
+    .about-section {
+      padding: 160px 48px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 120px;
+      align-items: center;
+    }
+
+    .about-label {
+      font-size: 0.55rem;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--dream-purple);
+      margin-bottom: 24px;
+    }
+
+    .about-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 32px;
+    }
+
+    .about-heading em {
+      font-style: italic;
+      color: var(--dream-purple);
+    }
+
+    .about-body {
+      font-size: 0.72rem;
+      line-height: 2;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    /* CATEGORIES SECTION */
+    .categories-section {
+      padding: 120px 48px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 80px;
+    }
+
+    .section-label {
+      font-size: 0.55rem;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .category-card {
+      padding: 60px 40px;
+      position: relative;
+      overflow: hidden;
+      cursor: none;
+      transition: all 0.5s ease;
+    }
+
+    .category-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .category-card:nth-child(1)::before {
+      background: radial-gradient(circle at 50% 100%, rgba(110,198,245,0.15), transparent 70%);
+    }
+    .category-card:nth-child(2)::before {
+      background: radial-gradient(circle at 50% 100%, rgba(200,126,245,0.15), transparent 70%);
+    }
+    .category-card:nth-child(3)::before {
+      background: radial-gradient(circle at 50% 100%, rgba(245,160,200,0.15), transparent 70%);
+    }
+
+    .category-card:hover::before { opacity: 1; }
+
+    .category-num {
+      font-size: 0.55rem;
+      letter-spacing: 0.3em;
+      color: var(--text-muted);
+      margin-bottom: 48px;
+    }
+
+    .category-icon {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 32px;
+      position: relative;
+    }
+
+    .category-canvas {
+      width: 80px;
+      height: 80px;
+    }
+
+    .category-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      font-style: italic;
+    }
+
+    .category-body {
+      font-size: 0.68rem;
+      line-height: 1.9;
+      color: var(--text-muted);
+    }
+
+    .category-card:nth-child(1) .category-title { color: var(--dream-blue); }
+    .category-card:nth-child(2) .category-title { color: var(--dream-purple); }
+    .category-card:nth-child(3) .category-title { color: var(--dream-pink); }
+
+    /* HOW IT WORKS */
+    .process-section {
+      padding: 120px 48px;
+    }
+
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      margin-top: 80px;
+      border: 1px solid var(--border);
+    }
+
+    .process-step {
+      padding: 48px 32px;
+      border-right: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .process-step:last-child { border-right: none; }
+
+    .step-num {
+      font-size: 4rem;
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255,255,255,0.1);
+      line-height: 1;
+      margin-bottom: 32px;
+    }
+
+    .step-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-style: italic;
+      margin-bottom: 16px;
+    }
+
+    .step-body {
+      font-size: 0.65rem;
+      line-height: 1.9;
+      color: var(--text-muted);
+    }
+
+    /* CTA SECTION */
+    .cta-section {
+      padding: 160px 48px;
+      text-align: center;
+      position: relative;
+    }
+
+    .cta-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(110,198,245,0.08), transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 8vw, 7rem);
+      font-weight: 900;
+      line-height: 0.9;
+      margin-bottom: 48px;
+    }
+
+    .cta-title em {
+      font-style: italic;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255,255,255,0.4);
+      display: block;
+    }
+
+    .cta-actions {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 40px 48px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-copy {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 32px;
+    }
+
+    .footer-links a {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover { color: var(--dream-blue); }
+  </style>
+</head>
+<body>
+
+  <div class="cursor"></div>
+  <div class="cursor-trail"></div>
+
+  <!-- GRADIENT BACKGROUND -->
+  <div class="gradient-mesh">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
+    <div class="orb orb-5"></div>
+  </div>
+  <div class="grain"></div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-logo">Echo of Mind</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Dream</a></li>
+      <li><a href="pages/live.html">Live</a></li>
+      <li><a href="pages/archive.html">Archive</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-eyebrow distort-text">Dream Intelligence · Psychoanalytic Patterns</div>
+
+    <h1 class="hero-title">
+      <em>Echo</em>
+      <span class="accent">of Mind</span>
+    </h1>
+
+    <p class="hero-sub">
+      Voice your dream. Receive its echo.<br>
+      A live psychoanalytic pattern — your subconscious made visible, bridging internal state and external form through three primordial categories of the unconscious.
+    </p>
+
+    <div class="hero-actions">
+      <a href="pages/live.html" class="btn btn-primary">
+        <span>▸ Begin Session</span>
+      </a>
+      <a href="pages/archive.html" class="btn">
+        <span>Collective Archive</span>
+      </a>
+    </div>
+
+    <div class="hero-visual">
+      <div class="dream-sphere sphere-1"></div>
+      <div class="dream-sphere sphere-2"></div>
+      <div class="dream-sphere sphere-3"></div>
+      <div class="dream-sphere sphere-4"></div>
+      <svg class="sphere-connection" viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="200" y1="200" x2="380" y2="380" stroke="rgba(110,198,245,0.15)" stroke-width="1"/>
+        <line x1="380" y1="130" x2="480" y2="320" stroke="rgba(200,126,245,0.1)" stroke-width="1"/>
+        <line x1="200" y1="200" x2="380" y2="130" stroke="rgba(110,198,245,0.1)" stroke-width="1"/>
+        <circle cx="200" cy="200" r="3" fill="rgba(110,198,245,0.4)"/>
+        <circle cx="380" cy="380" r="3" fill="rgba(126,245,192,0.4)"/>
+        <circle cx="380" cy="130" r="3" fill="rgba(245,160,200,0.4)"/>
+        <circle cx="480" cy="320" r="2" fill="rgba(200,126,245,0.3)"/>
+      </svg>
+    </div>
+
+    <div class="hero-scroll">Scroll</div>
+  </section>
+
+  <!-- MARQUEE -->
+  <section class="marquee-section">
+    <div class="marquee-track">
+      <div class="marquee-inner">
+        <span>Figurative</span><span class="marquee-dot">·</span>
+        <span>Environment</span><span class="marquee-dot">·</span>
+        <span>Emotional Impact</span><span class="marquee-dot">·</span>
+        <span>Subconscious Pattern</span><span class="marquee-dot">·</span>
+        <span>Internal State</span><span class="marquee-dot">·</span>
+        <span>Echo of Mind</span><span class="marquee-dot">·</span>
+        <span>Dream Intelligence</span><span class="marquee-dot">·</span>
+        <span>Psychoanalysis</span><span class="marquee-dot">·</span>
+        <span>Collective Archive</span><span class="marquee-dot">·</span>
+        <span>Vulnerability</span><span class="marquee-dot">·</span>
+        <span>Figurative</span><span class="marquee-dot">·</span>
+        <span>Environment</span><span class="marquee-dot">·</span>
+        <span>Emotional Impact</span><span class="marquee-dot">·</span>
+        <span>Subconscious Pattern</span><span class="marquee-dot">·</span>
+        <span>Internal State</span><span class="marquee-dot">·</span>
+        <span>Echo of Mind</span><span class="marquee-dot">·</span>
+        <span>Dream Intelligence</span><span class="marquee-dot">·</span>
+        <span>Psychoanalysis</span><span class="marquee-dot">·</span>
+        <span>Collective Archive</span><span class="marquee-dot">·</span>
+        <span>Vulnerability</span><span class="marquee-dot">·</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about-section">
+    <div class="reveal">
+      <p class="about-label">What is Echo of Mind</p>
+      <h2 class="about-heading">The space between<br>sleeping and <em>knowing</em></h2>
+      <p class="about-body">
+        Echo of Mind is a voice-driven dream interpretation system. You speak your dream aloud — in the darkness, in the half-light of waking — and the system listens. Not for meaning, but for form.
+      </p>
+      <p class="about-body">
+        What returns is not an interpretation but a pattern. A visual echo of your unconscious mind, rendered in real time through psychoanalytic categories that have shaped our understanding of the dreaming self.
+      </p>
+      <a href="pages/live.html" class="btn btn-primary" style="margin-top: 24px;">
+        <span>▸ Try Live Session</span>
+      </a>
+    </div>
+
+    <div class="reveal" style="transition-delay: 0.2s;">
+      <!-- Animated pattern preview -->
+      <canvas id="previewCanvas" class="pattern-canvas" width="500" height="400" style="width:100%; border: 1px solid var(--border);"></canvas>
+    </div>
+  </section>
+
+  <!-- CATEGORIES -->
+  <section class="categories-section">
+    <div class="section-header reveal">
+      <div>
+        <p class="section-label">The Three Dimensions</p>
+        <h2 class="section-title">How your dream<br>is heard</h2>
+      </div>
+    </div>
+
+    <div class="categories-grid">
+      <div class="category-card glass-card reveal">
+        <p class="category-num">01</p>
+        <canvas class="category-canvas" id="catCanvas1" width="80" height="80"></canvas>
+        <h3 class="category-title">Figurative</h3>
+        <p class="category-body">The forms that populate your dream — figures, faces, bodies, archetypes. Who appears in the theatre of your unconscious, and in what form? These entities carry symbolic weight mapped to psychoanalytic frameworks from Jung and Freud.</p>
+      </div>
+
+      <div class="category-card glass-card reveal" style="transition-delay: 0.15s;">
+        <p class="category-num">02</p>
+        <canvas class="category-canvas" id="catCanvas2" width="80" height="80"></canvas>
+        <h3 class="category-title">Environment</h3>
+        <p class="category-body">The dreamscape itself — spatial, atmospheric, elemental. Whether your unconscious builds labyrinths or open plains, coastlines or voids, the architecture of the dream reveals the architecture of the self.</p>
+      </div>
+
+      <div class="category-card glass-card reveal" style="transition-delay: 0.3s;">
+        <p class="category-num">03</p>
+        <canvas class="category-canvas" id="catCanvas3" width="80" height="80"></canvas>
+        <h3 class="category-title">Emotional Impact</h3>
+        <p class="category-body">The residue — the feeling-tone that persists when images dissolve. Fear, euphoria, grief, longing, dissolution. The emotional frequency of the dream, traced as colour, rhythm and texture in the generated pattern.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="process-section">
+    <div class="section-header reveal">
+      <div>
+        <p class="section-label">The Process</p>
+        <h2 class="section-title">From dream<br>to echo</h2>
+      </div>
+    </div>
+
+    <div class="process-steps reveal">
+      <div class="process-step glass-card">
+        <div class="step-num">01</div>
+        <h3 class="step-title">Speak</h3>
+        <p class="step-body">Open a live session and speak your dream into the device. No keyboard. No typing. Pure, unmediated voice — as close to the dream-state as possible.</p>
+      </div>
+      <div class="process-step glass-card">
+        <div class="step-num">02</div>
+        <h3 class="step-title">Analyse</h3>
+        <p class="step-body">The system processes your words across three psychoanalytic vectors: figurative content, environmental resonance, emotional frequency.</p>
+      </div>
+      <div class="process-step glass-card">
+        <div class="step-num">03</div>
+        <h3 class="step-title">Generate</h3>
+        <p class="step-body">A unique pattern is generated in real time — visible on your mirrored screen. An abstract visual psychoanalysis that is entirely, specifically yours.</p>
+      </div>
+      <div class="process-step glass-card">
+        <div class="step-num">04</div>
+        <h3 class="step-title">Share</h3>
+        <p class="step-body">Choose to release your pattern into the Collective Archive — a global exhibition of interior states, inviting human connection through shared vulnerability.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section reveal">
+    <div class="cta-glow"></div>
+    <h2 class="cta-title">
+      Let down<br>
+      <em>your walls</em>
+    </h2>
+    <p style="font-size: 0.72rem; color: var(--text-muted); line-height: 2; margin-bottom: 48px; max-width: 400px; margin-left: auto; margin-right: auto;">
+      Join the collective archive. Let people from all over the world access your internal state through your dreams.
+    </p>
+    <div class="cta-actions">
+      <a href="pages/live.html" class="btn btn-primary">▸ Begin Dream Session</a>
+      <a href="pages/archive.html" class="btn">Enter Archive</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p class="footer-copy">© Echo of Mind — Dream Intelligence System</p>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="pages/live.html">Live</a>
+      <a href="pages/archive.html">Archive</a>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    // ANIMATED PREVIEW CANVAS
+    const canvas = document.getElementById('previewCanvas');
+    const ctx = canvas.getContext('2d');
+    let t = 0;
+    const colors = ['#6ec6f5','#c87ef5','#7ef5c0','#f5e87e','#f5a0c8','#f5a050'];
+
+    function drawPreview() {
+      ctx.clearRect(0,0,500,400);
+      ctx.fillStyle = 'rgba(3,1,10,0.3)';
+      ctx.fillRect(0,0,500,400);
+
+      for (let i = 0; i < 8; i++) {
+        const x = 250 + Math.sin(t * 0.5 + i * 0.8) * 180;
+        const y = 200 + Math.cos(t * 0.4 + i * 0.9) * 120;
+        const r = 30 + Math.sin(t * 0.3 + i) * 20;
+
+        const grad = ctx.createRadialGradient(x,y,0,x,y,r*2);
+        grad.addColorStop(0, colors[i % colors.length] + '60');
+        grad.addColorStop(1, 'transparent');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(x, y, r*2, 0, Math.PI*2);
+        ctx.fill();
+      }
+
+      // Lines
+      ctx.strokeStyle = 'rgba(110,198,245,0.15)';
+      ctx.lineWidth = 0.5;
+      for (let i = 0; i < 6; i++) {
+        const x1 = 250 + Math.sin(t * 0.5 + i * 1.0) * 180;
+        const y1 = 200 + Math.cos(t * 0.4 + i * 1.1) * 120;
+        const x2 = 250 + Math.sin(t * 0.5 + (i+1) * 1.0) * 180;
+        const y2 = 200 + Math.cos(t * 0.4 + (i+1) * 1.1) * 120;
+        ctx.beginPath();
+        ctx.moveTo(x1,y1);
+        ctx.lineTo(x2,y2);
+        ctx.stroke();
+      }
+
+      t += 0.008;
+      requestAnimationFrame(drawPreview);
+    }
+    drawPreview();
+
+    // CATEGORY MINI CANVASES
+    function drawCategoryCanvas(canvasId, color1, color2, type) {
+      const c = document.getElementById(canvasId);
+      const cx = c.getContext('2d');
+      let t2 = 0;
+      function draw() {
+        cx.clearRect(0,0,80,80);
+        if (type === 'figure') {
+          for (let i=0;i<3;i++) {
+            const x=40+Math.sin(t2+i*2)*20, y=40+Math.cos(t2+i*2)*15;
+            const g=cx.createRadialGradient(x,y,0,x,y,20);
+            g.addColorStop(0,color1+'aa');g.addColorStop(1,'transparent');
+            cx.fillStyle=g;cx.beginPath();cx.arc(x,y,20,0,Math.PI*2);cx.fill();
+          }
+        } else if (type === 'env') {
+          cx.strokeStyle=color1+'66';cx.lineWidth=0.5;
+          for(let i=0;i<5;i++){
+            cx.beginPath();
+            for(let x=0;x<80;x++){
+              const y=40+Math.sin(x*0.15+t2+i*0.6)*8*(1+i*0.3);
+              i===0?cx.moveTo(x,y):cx.lineTo(x,y);
+            }cx.stroke();
+          }
+        } else {
+          for(let i=0;i<20;i++){
+            const x=Math.random()*80,y=Math.random()*80;
+            const g=cx.createRadialGradient(x,y,0,x,y,8);
+            g.addColorStop(0,color1+(Math.random()>0.5?'80':'40'));
+            g.addColorStop(1,'transparent');
+            cx.fillStyle=g;cx.beginPath();cx.arc(x,y,8,0,Math.PI*2);cx.fill();
+          }
+        }
+        t2+=0.02;
+        requestAnimationFrame(draw);
+      }
+      draw();
+    }
+
+    drawCategoryCanvas('catCanvas1','#6ec6f5','#c87ef5','figure');
+    drawCategoryCanvas('catCanvas2','#c87ef5','#7ef5c0','env');
+    drawCategoryCanvas('catCanvas3','#f5a0c8','#f5e87e','emotion');
+  </script>
+</body>
+</html>

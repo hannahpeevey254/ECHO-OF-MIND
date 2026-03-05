@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Collective Archive — Echo of Mind</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+
+    /* ARCHIVE PAGE */
+
+    .archive-hero {
+      min-height: 60vh;
+      padding: 140px 48px 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      position: relative;
+    }
+
+    .archive-eyebrow {
+      font-size: 0.55rem;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--dream-purple);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      opacity: 0;
+      animation: heroFade 1s ease 0.3s forwards;
+    }
+
+    .archive-eyebrow::before {
+      content: '';
+      width: 40px;
+      height: 1px;
+      background: var(--dream-purple);
+    }
+
+    .archive-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 8vw, 8rem);
+      font-weight: 900;
+      line-height: 0.88;
+      letter-spacing: -0.02em;
+      max-width: 800px;
+      opacity: 0;
+      animation: heroFade 1.2s ease 0.5s forwards;
+    }
+
+    .archive-title em {
+      font-style: italic;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(200,126,245,0.6);
+    }
+
+    .archive-sub {
+      max-width: 560px;
+      font-size: 0.72rem;
+      line-height: 2;
+      color: var(--text-muted);
+      margin-top: 32px;
+      opacity: 0;
+      animation: heroFade 1s ease 0.8s forwards;
+    }
+
+    @keyframes heroFade {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* STATS BAR */
+    .stats-bar {
+      padding: 40px 48px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+
+    .stat-item {
+      padding: 20px 32px;
+      border-right: 1px solid var(--border);
+    }
+
+    .stat-item:last-child { border-right: none; }
+
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      font-style: italic;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 0.55rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .stat-item:nth-child(1) .stat-num { color: var(--dream-blue); }
+    .stat-item:nth-child(2) .stat-num { color: var(--dream-purple); }
+    .stat-item:nth-child(3) .stat-num { color: var(--dream-green); }
+    .stat-item:nth-child(4) .stat-num { color: var(--dream-pink); }
+
+    /* FILTER BAR */
+    .filter-bar {
+      padding: 32px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .filter-left {
+      display: flex;
+      gap: 12px;
+    }
+
+    .filter-btn {
+      padding: 10px 20px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      cursor: none;
+      transition: all 0.3s;
+    }
+
+    .filter-btn.active, .filter-btn:hover {
+      border-color: var(--dream-purple);
+      color: var(--dream-purple);
+    }
+
+    .filter-right {
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+    }
+
+    /* ARCHIVE GRID */
+    .archive-grid-section {
+      padding: 0 48px 120px;
+    }
+
+    .archive-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .dream-card {
+      position: relative;
+      overflow: hidden;
+      cursor: none;
+      transition: transform 0.4s ease;
+    }
+
+    .dream-card:hover { z-index: 10; }
+    .dream-card:hover .card-overlay { opacity: 1; }
+    .dream-card:hover canvas { filter: brightness(0.7); }
+
+    .dream-canvas {
+      width: 100%;
+      aspect-ratio: 4/3;
+      display: block;
+      transition: filter 0.4s ease;
+    }
+
+    .card-overlay {
+      position: absolute;
+      inset: 0;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      background: linear-gradient(to top, rgba(3,1,10,0.9) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .card-author {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .card-location {
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .card-time {
+      font-size: 0.5rem;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 0.1em;
+    }
+
+    .card-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      padding: 4px 10px;
+      font-size: 0.5rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .tag-figurative { border-color: rgba(110,198,245,0.4); color: var(--dream-blue); }
+    .tag-environment { border-color: rgba(200,126,245,0.4); color: var(--dream-purple); }
+    .tag-emotional { border-color: rgba(245,160,200,0.4); color: var(--dream-pink); }
+
+    /* FEATURED DREAM - LARGE CARD */
+    .featured-dream {
+      grid-column: span 2;
+    }
+
+    .featured-dream .dream-canvas {
+      aspect-ratio: 16/9;
+    }
+
+    /* MANIFESTO SECTION */
+    .manifesto-section {
+      padding: 120px 48px;
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 120px;
+      align-items: center;
+    }
+
+    .manifesto-label {
+      font-size: 0.55rem;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--dream-purple);
+      margin-bottom: 24px;
+    }
+
+    .manifesto-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 32px;
+    }
+
+    .manifesto-title em {
+      font-style: italic;
+      color: var(--dream-purple);
+    }
+
+    .manifesto-body {
+      font-size: 0.72rem;
+      line-height: 2.2;
+      color: var(--text-muted);
+    }
+
+    .manifesto-body p {
+      margin-bottom: 20px;
+    }
+
+    .manifesto-quote {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-style: italic;
+      line-height: 1.5;
+      color: var(--text-primary);
+      padding: 40px;
+      border: 1px solid rgba(200,126,245,0.2);
+      background: rgba(200,126,245,0.03);
+      position: relative;
+    }
+
+    .manifesto-quote::before {
+      content: '"';
+      position: absolute;
+      top: 16px;
+      left: 24px;
+      font-size: 4rem;
+      color: rgba(200,126,245,0.2);
+      font-family: 'Playfair Display', serif;
+      line-height: 1;
+    }
+
+    /* CONTRIBUTE CTA */
+    .contribute-section {
+      padding: 80px 48px;
+      text-align: center;
+      border-top: 1px solid var(--border);
+    }
+
+    .contribute-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 4rem);
+      font-weight: 900;
+      margin-bottom: 24px;
+      line-height: 1.1;
+    }
+
+    .contribute-title em {
+      font-style: italic;
+      color: var(--dream-purple);
+    }
+
+    .contribute-body {
+      font-size: 0.72rem;
+      line-height: 2;
+      color: var(--text-muted);
+      max-width: 480px;
+      margin: 0 auto 40px;
+    }
+
+    /* WORLD MAP DOTS - cosmetic */
+    .world-dots {
+      margin: 48px auto;
+      max-width: 600px;
+      height: 200px;
+      position: relative;
+      opacity: 0.4;
+    }
+
+    .dot-cluster {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--dream-purple);
+      animation: dotPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes dotPulse {
+      0%, 100% { opacity: 0.4; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.5); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor"></div>
+  <div class="cursor-trail"></div>
+
+  <div class="gradient-mesh">
+    <div class="orb orb-1" style="background: var(--dream-purple);"></div>
+    <div class="orb orb-2" style="background: var(--dream-pink);"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
+    <div class="orb orb-5"></div>
+  </div>
+  <div class="grain"></div>
+
+  <nav>
+    <a href="../index.html" class="nav-logo">Echo of Mind</a>
+    <ul class="nav-links">
+      <li><a href="../index.html">Dream</a></li>
+      <li><a href="live.html">Live</a></li>
+      <li><a href="archive.html">Archive</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="archive-hero">
+    <p class="archive-eyebrow">Collective Archive</p>
+    <h1 class="archive-title">
+      Interior states<br>
+      made <em>visible</em>
+    </h1>
+    <p class="archive-sub">
+      A living archive of human dreaming. Patterns shared across borders, time zones, languages and bodies — each one an echo of an individual mind, offered to the world. Let down your walls. This is radical vulnerability.
+    </p>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats-bar reveal">
+    <div class="stat-item">
+      <p class="stat-num" id="dreamCount">2,847</p>
+      <p class="stat-label">Dreams Archived</p>
+    </div>
+    <div class="stat-item">
+      <p class="stat-num">64</p>
+      <p class="stat-label">Countries</p>
+    </div>
+    <div class="stat-item">
+      <p class="stat-num">93%</p>
+      <p class="stat-label">Chose to Share</p>
+    </div>
+    <div class="stat-item">
+      <p class="stat-num">∞</p>
+      <p class="stat-label">Connections Formed</p>
+    </div>
+  </div>
+
+  <!-- FILTER -->
+  <div class="filter-bar reveal">
+    <div class="filter-left">
+      <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+      <button class="filter-btn" onclick="setFilter('figurative', this)">Figurative</button>
+      <button class="filter-btn" onclick="setFilter('environment', this)">Environment</button>
+      <button class="filter-btn" onclick="setFilter('emotional', this)">Emotional</button>
+    </div>
+    <p class="filter-right">Showing 18 of 2,847 patterns</p>
+  </div>
+
+  <!-- GRID -->
+  <section class="archive-grid-section">
+    <div class="archive-grid" id="archiveGrid">
+      <!-- Generated by JS -->
+    </div>
+  </section>
+
+  <!-- MANIFESTO -->
+  <section class="manifesto-section">
+    <div class="reveal">
+      <p class="manifesto-label">Why Vulnerability</p>
+      <h2 class="manifesto-title">The subconscious<br>as <em>connection</em></h2>
+      <div class="manifesto-body">
+        <p>
+          We guard our interiors ferociously. We present constructed selves to the world — curated, considered, defended. The dream is the one place we cannot lie.
+        </p>
+        <p>
+          Echo of Mind asks: what if you offered that? Not your words, not your image, but the actual shape of your unconscious — the pattern your mind makes in the dark.
+        </p>
+        <p>
+          The Collective Archive is an act of collective faith. Each pattern that enters it is a person choosing to be known at the deepest level — not through what they say, but through what they dream.
+        </p>
+      </div>
+    </div>
+
+    <div class="reveal" style="transition-delay: 0.2s;">
+      <div class="manifesto-quote">
+        To let another see the pattern of your dream is to let them see the architecture of your soul — the structure beneath the structure.
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTRIBUTE -->
+  <section class="contribute-section reveal">
+    <h2 class="contribute-title">
+      Add your<br>
+      <em>echo</em>
+    </h2>
+    <p class="contribute-body">
+      Begin a dream session. Voice your dream. Choose to share. Join a growing archive of human interiority — patterns from Tokyo, Lagos, Oslo, São Paulo, and beyond.
+    </p>
+
+    <!-- World dots - decorative -->
+    <div class="world-dots">
+      <div class="dot-cluster" style="top:60%;left:25%;animation-delay:0s;"></div>
+      <div class="dot-cluster" style="top:40%;left:50%;animation-delay:0.5s;"></div>
+      <div class="dot-cluster" style="top:35%;left:65%;animation-delay:1s;"></div>
+      <div class="dot-cluster" style="top:55%;left:80%;animation-delay:1.5s;"></div>
+      <div class="dot-cluster" style="top:65%;left:35%;animation-delay:0.3s;"></div>
+      <div class="dot-cluster" style="top:30%;left:20%;animation-delay:0.8s;"></div>
+      <div class="dot-cluster" style="top:70%;left:55%;animation-delay:1.2s;"></div>
+      <div class="dot-cluster" style="top:45%;left:72%;animation-delay:0.6s;width:6px;height:6px;"></div>
+      <div class="dot-cluster" style="top:52%;left:18%;animation-delay:1.8s;width:6px;height:6px;"></div>
+      <div class="dot-cluster" style="top:38%;left:85%;animation-delay:0.9s;"></div>
+      <!-- connecting lines via SVG -->
+      <svg style="position:absolute;inset:0;width:100%;height:100%" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="25%" y1="60%" x2="50%" y2="40%" stroke="rgba(200,126,245,0.25)" stroke-width="0.5"/>
+        <line x1="50%" y1="40%" x2="65%" y2="35%" stroke="rgba(200,126,245,0.2)" stroke-width="0.5"/>
+        <line x1="65%" y1="35%" x2="80%" y2="55%" stroke="rgba(200,126,245,0.15)" stroke-width="0.5"/>
+        <line x1="20%" y1="30%" x2="35%" y2="65%" stroke="rgba(200,126,245,0.15)" stroke-width="0.5"/>
+        <line x1="72%" y1="45%" x2="85%" y2="38%" stroke="rgba(200,126,245,0.2)" stroke-width="0.5"/>
+      </svg>
+    </div>
+
+    <div style="display:flex;gap:20px;justify-content:center;">
+      <a href="live.html" class="btn btn-primary">▸ Begin Dream Session</a>
+      <a href="../index.html" class="btn">Learn More</a>
+    </div>
+  </section>
+
+  <footer style="padding: 40px 48px; border-top: 1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+    <p style="font-size:0.6rem;letter-spacing:0.2em;color:var(--text-muted);">© Echo of Mind — Collective Archive</p>
+    <div style="display:flex;gap:32px;">
+      <a href="../index.html" style="font-size:0.6rem;letter-spacing:0.2em;color:var(--text-muted);text-decoration:none;">Home</a>
+      <a href="live.html" style="font-size:0.6rem;letter-spacing:0.2em;color:var(--text-muted);text-decoration:none;">Live</a>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+  <script>
+
+    // DREAM CARD DATA
+    const dreamData = [
+      { author: 'A.M.', location: 'Tokyo, JP', time: '03:14', tags: ['figurative','environment'], dominant: 'shadow', featured: true },
+      { author: 'R.K.', location: 'Lagos, NG', time: '05:22', tags: ['emotional'], dominant: 'euphoric' },
+      { author: 'S.B.', location: 'Oslo, NO', time: '02:08', tags: ['environment','emotional'], dominant: 'oceanic' },
+      { author: 'C.W.', location: 'São Paulo, BR', time: '04:45', tags: ['figurative'], dominant: 'archetype' },
+      { author: 'M.L.', location: 'Paris, FR', time: '03:30', tags: ['environment'], dominant: 'liminal' },
+      { author: 'J.O.', location: 'Seoul, KR', time: '01:55', tags: ['emotional','figurative'], dominant: 'anxious' },
+      { author: 'P.N.', location: 'Berlin, DE', time: '06:12', tags: ['environment'], dominant: 'aerial' },
+      { author: 'I.F.', location: 'London, UK', time: '02:38', tags: ['figurative','emotional'], dominant: 'anima' },
+    ];
+
+    const colourSets = [
+      ['#6ec6f5','#c87ef5','#7ef5c0'],
+      ['#f5a0c8','#f5e87e','#c87ef5'],
+      ['#7ef5c0','#6ec6f5','#f5a050'],
+      ['#c87ef5','#f5a0c8','#6ec6f5'],
+      ['#f5e87e','#7ef5c0','#f5a0c8'],
+      ['#f5a050','#6ec6f5','#c87ef5'],
+      ['#f5a0c8','#7ef5c0','#f5e87e'],
+      ['#6ec6f5','#f5a050','#f5a0c8'],
+    ];
+
+    function buildGrid() {
+      const grid = document.getElementById('archiveGrid');
+      dreamData.forEach((dream, i) => {
+        const card = document.createElement('div');
+        card.className = 'dream-card reveal' + (dream.featured ? ' featured-dream' : '');
+        card.style.transitionDelay = (i * 0.08) + 's';
+
+        const cid = 'dc' + i;
+        const tagHTML = dream.tags.map(t =>
+          `<span class="tag tag-${t}">${t}</span>`
+        ).join('');
+
+        card.innerHTML = `
+          <canvas class="dream-canvas" id="${cid}"></canvas>
+          <div class="card-overlay">
+            <div class="card-meta">
+              <div>
+                <p class="card-author">${dream.author}</p>
+                <p class="card-location">${dream.location}</p>
+                <p class="card-time">${dream.time} local</p>
+              </div>
+              <div class="card-tags">${tagHTML}</div>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+
+        // Draw pattern on canvas
+        const c = document.getElementById(cid);
+        c.width = dream.featured ? 800 : 400;
+        c.height = dream.featured ? 450 : 300;
+        drawDreamPattern(c, colourSets[i % colourSets.length], i);
+      });
+
+      // Re-observe reveals
+      document.querySelectorAll('.reveal').forEach(el => {
+        if (!el.classList.contains('visible')) {
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+          }, { threshold: 0.1 });
+          observer.observe(el);
+        }
+      });
+    }
+
+    function drawDreamPattern(canvas, colors, seed) {
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width, H = canvas.height;
+      let t = seed * 2.3;
+
+      function draw() {
+        ctx.fillStyle = 'rgba(3,1,10,0.08)';
+        ctx.fillRect(0,0,W,H);
+
+        const cx = W/2, cy = H/2;
+
+        // Blobs
+        for (let i = 0; i < 5; i++) {
+          const x = cx + Math.sin(t*0.3 + i*1.2 + seed) * (W*0.3);
+          const y = cy + Math.cos(t*0.25 + i*1.1 + seed) * (H*0.3);
+          const r = (W*0.12) + Math.sin(t*0.5+i)*W*0.04;
+
+          const g = ctx.createRadialGradient(x,y,0,x,y,r*2.5);
+          g.addColorStop(0, colors[i%colors.length] + '55');
+          g.addColorStop(1, 'transparent');
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.save();
+          ctx.translate(x,y);
+          ctx.rotate(t*0.04 + i*0.5);
+          ctx.scale(1+Math.sin(t*0.8+i)*0.25, 1+Math.cos(t*0.7+i)*0.25);
+          ctx.arc(0,0,r,0,Math.PI*2);
+          ctx.restore();
+          ctx.fill();
+        }
+
+        // Thin lines
+        ctx.strokeStyle = colors[0] + '22';
+        ctx.lineWidth = 0.5;
+        for (let w = 0; w < 3; w++) {
+          ctx.beginPath();
+          for (let x=0; x<=W; x+=4) {
+            const y = cy + Math.sin(x*0.015 + t*0.3 + w*0.8 + seed) * H*0.2;
+            x===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+          }
+          ctx.stroke();
+        }
+
+        t += 0.004;
+        requestAnimationFrame(draw);
+      }
+      draw();
+    }
+
+    buildGrid();
+
+    // FILTER
+    function setFilter(type, btn) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const cards = document.querySelectorAll('.dream-card');
+      cards.forEach(c => {
+        c.style.opacity = type === 'all' ? '1' : '0.3';
+      });
+    }
+  </script>
+
+</body>
+</html>
