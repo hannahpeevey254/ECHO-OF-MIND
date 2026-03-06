@@ -15,13 +15,14 @@
       font-family: 'Inter', sans-serif;
     }
 
-    /* ── FIXED BACKGROUND IMAGE ── */
+    /* ── ANIMATED GIF BACKGROUND ── */
     body {
-      background: #000000;
+      background: #111;
       background-image: url('bg.gif');
       background-size: cover;
       background-position: center center;
       background-attachment: fixed;
+      background-repeat: no-repeat;
     }
 
     /* ── HEADER ── */
@@ -38,19 +39,18 @@
       font-weight: 900;
       font-size: clamp(3.5rem, 9vw, 8rem);
       letter-spacing: -0.02em;
-      color: #fff;
+      color: #000;
       line-height: 0.95;
-      text-shadow: 0 2px 24px rgba(0,0,0,0.2);
       margin-bottom: 16px;
     }
 
     .subtitle {
       font-family: 'Inter', sans-serif;
       font-size: 0.62rem;
-      font-weight: 800;
+      font-weight: 400;
       letter-spacing: 0.32em;
       text-transform: uppercase;
-      color: rgba(0, 0, 0, 0.6);
+      color: rgba(0,0,0,0.6);
     }
 
     .live-bar {
@@ -64,80 +64,70 @@
     .live-dot {
       width: 6px; height: 6px;
       border-radius: 50%;
-      background: #000000;
+      background: #000;
       animation: blink 1.8s ease-in-out infinite;
     }
 
     @keyframes blink {
       0%,100% { opacity:1; }
-      50%      { opacity:0.25; }
+      50%      { opacity:0.2; }
     }
 
     .live-text {
       font-size: 0.54rem;
       letter-spacing: 0.3em;
       text-transform: uppercase;
-      color: rgba(0, 0, 0, 0.5);
+      color: rgba(0,0,0,0.5);
     }
 
-    /* ── GRID WRAPPER ── */
-    .grid-wrap {
-      position: relative;
-      z-index: 5;
-      padding: 0;
-    }
-
-    /* ── THE GRID ── */
-    /* 6 columns, 20 rows = 120 cells
-       Each cell is transparent by default → shows the background.
-       White border lines create the grid look.                    */
+    /* ── GRID ── */
     .archive-grid {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
-      grid-template-rows: repeat(20, 1fr);
       width: 100%;
-      /* Make the grid tall enough for 20 rows at a nice square aspect */
     }
 
-.cell {
-  aspect-ratio: 1 / 1;
-  position: relative;
-  background: transparent;
-  border: 4px solid rgba(255, 255, 255, 0.55);
-  overflow: visible;
-  padding: 6px;
-}
+    /* Each cell — transparent so gif shows through */
+    .cell {
+      aspect-ratio: 1 / 1;
+      position: relative;
+      background: transparent;
+      /* Darker, thicker white border = more visible grid lines */
+      border: 2px solid rgba(255, 255, 255, 0.85);
+      /* Padding creates the gap between grid line and image */
+      padding: 8px;
+      overflow: visible;
+    }
 
-    /* When empty, completely see-through */
-    .cell.empty { background: transparent; }
-
-    /* When filled, the canvas covers the cell */
-    .cell.filled canvas {
+    /* Image sits inside the padding gap */
+    .cell img {
       position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
+      inset: 8px;
+      width: calc(100% - 16px);
+      height: calc(100% - 16px);
+      object-fit: cover;
       display: block;
+      animation: fillIn 0.55s cubic-bezier(.34,1.56,.64,1) forwards;
     }
 
-    /* Hover: brighten border */
-    .cell:hover {
-      border-color: rgba(255,255,255,0.95);
-      z-index: 20;
+    @keyframes fillIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to   { opacity: 1; transform: scale(1); }
     }
 
-    /* Meta info on hover for filled cells */
+    /* Meta on hover */
     .cell-meta {
       position: absolute;
-      inset: 0;
+      inset: 8px;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
-      padding: 8px;
-      background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 60%);
+      padding: 6px 8px;
+      background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 60%);
       opacity: 0;
       transition: opacity 0.3s;
       pointer-events: none;
+      z-index: 5;
     }
     .cell.filled:hover .cell-meta { opacity: 1; }
 
@@ -145,29 +135,20 @@
       font-size: 0.48rem;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.85);
+      color: rgba(255,255,255,0.9);
     }
     .cell-time {
       font-size: 0.42rem;
       letter-spacing: 0.12em;
-      color: rgba(255,255,255,0.45);
-      margin-top: 1px;
-    }
-
-    /* Reveal animation when a cell fills */
-    @keyframes fillIn {
-      from { opacity: 0; transform: scale(0.88); }
-      to   { opacity: 1; transform: scale(1); }
-    }
-    .cell.just-added canvas {
-      animation: fillIn 0.55s cubic-bezier(.34,1.56,.64,1) forwards;
+      color: rgba(255,255,255,0.5);
+      margin-top: 2px;
     }
 
     /* ── FOOTER ── */
     footer {
       position: relative;
       z-index: 10;
-      padding: 20px 48px;
+      padding: 24px 48px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -177,7 +158,7 @@
       font-size: 0.52rem;
       letter-spacing: 0.28em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.45);
+      color: rgba(0,0,0,0.45);
     }
   </style>
 </head>
@@ -188,13 +169,11 @@
     <p class="subtitle">Human Connection Through a Subconscious State</p>
     <div class="live-bar">
       <div class="live-dot"></div>
-      <span class="live-text" id="liveStatus">Waiting for dreams — localhost:3000</span>
+      <span class="live-text" id="liveStatus">Connecting to Pi…</span>
     </div>
   </header>
 
-  <div class="grid-wrap">
-    <div class="archive-grid" id="archiveGrid"></div>
-  </div>
+  <div class="archive-grid" id="archiveGrid"></div>
 
   <footer>
     <span class="footer-l">Echo of Mind</span>
@@ -202,213 +181,32 @@
   </footer>
 
   <script>
-    // ─────────────────────────────
-    // BUILD GRID: 6 cols × 20 rows
-    // ─────────────────────────────
-    const COLS  = 6;
-    const ROWS  = 20;
-    const TOTAL = COLS * ROWS; // 120
-
+    // ── BUILD GRID: 6 cols × 20 rows = 120 cells ──
+    const TOTAL = 120;
     const grid  = document.getElementById('archiveGrid');
     const cells = [];
 
     for (let i = 0; i < TOTAL; i++) {
       const cell = document.createElement('div');
       cell.className = 'cell empty';
-
       const meta = document.createElement('div');
       meta.className = 'cell-meta';
       cell.appendChild(meta);
-
       grid.appendChild(cell);
       cells.push(cell);
     }
 
-    // ─────────────────────────────
-    // PATTERN GENERATOR
-    // Creates a psychoanalytic pattern canvas from a seed + palette
-    // ─────────────────────────────
-    function generatePattern(seed, palette) {
-      const c   = document.createElement('canvas');
-      c.width   = 400;
-      c.height  = 400;
-      const ctx = c.getContext('2d');
-      const rng = seededRng(seed);
-
-      const palettes = {
-        blue:   ['#6ec6f5','#1a5fa8','#c8e8ff','#0a2a5a','#7ab4e8'],
-        violet: ['#c87ef5','#6b20b8','#e8c4ff','#2a0a5a','#a07ad8'],
-        green:  ['#7ef5c0','#1ab870','#c4ffe8','#0a3a2a','#7ad8b8'],
-        warm:   ['#f5a050','#c85010','#ffd4a0','#5a1a00','#d89060'],
-        pink:   ['#f5a0c8','#c04080','#ffd4e8','#5a0a2a','#d880a8'],
-        red:    ['#f04040','#a00010','#ffc0c0','#400000','#d07070'],
-        teal:   ['#40d8c8','#0a8878','#b0f0e8','#003830','#70c0b8'],
-        gold:   ['#f0c040','#a07000','#fff0b0','#403000','#c8a050'],
-      };
-
-      const pal = palettes[palette] || palettes.blue;
-
-      // Gradient background
-      const bg = ctx.createLinearGradient(rng()*400, 0, rng()*400, 400);
-      bg.addColorStop(0,   pal[0] + 'ee');
-      bg.addColorStop(0.4, pal[3] + 'cc');
-      bg.addColorStop(0.8, pal[1] + 'cc');
-      bg.addColorStop(1,   pal[4] + 'dd');
-      ctx.fillStyle = bg;
-      ctx.fillRect(0, 0, 400, 400);
-
-      // Blob forms
-      for (let i = 0; i < 14; i++) {
-        const x = rng() * 400, y = rng() * 400;
-        const r = 30 + rng() * 160;
-        const g = ctx.createRadialGradient(x, y, 0, x, y, r);
-        g.addColorStop(0,   pal[i % pal.length] + 'aa');
-        g.addColorStop(0.5, pal[(i+1) % pal.length] + '55');
-        g.addColorStop(1,   'transparent');
-        ctx.fillStyle = g;
-        ctx.beginPath();
-        ctx.arc(x, y, r, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      // Wave lines
-      ctx.globalAlpha = 0.2;
-      for (let w = 0; w < 10; w++) {
-        ctx.beginPath();
-        ctx.strokeStyle = pal[w % pal.length];
-        ctx.lineWidth = 0.7;
-        const sy = rng() * 400;
-        ctx.moveTo(0, sy);
-        for (let x = 0; x <= 400; x += 4) {
-          const y = sy + Math.sin(x * 0.02 + rng() * 8) * (20 + rng() * 70);
-          ctx.lineTo(x, y);
-        }
-        ctx.stroke();
-      }
-      ctx.globalAlpha = 1;
-
-      // Fine grain
-      ctx.globalAlpha = 0.06;
-      for (let g = 0; g < 6000; g++) {
-        const gx = rng() * 400, gy = rng() * 400;
-        const v = rng() > 0.5 ? 255 : 0;
-        ctx.fillStyle = `rgba(${v},${v},${v},0.8)`;
-        ctx.fillRect(gx, gy, 1, 1);
-      }
-      ctx.globalAlpha = 1;
-
-      return c;
-    }
-
-    function seededRng(seed) {
-      let s = (seed * 2654435761) >>> 0;
-      return () => {
-        s = (s + 0x6D2B79F5) >>> 0;
-        let t = Math.imul(s ^ (s >>> 15), 1 | s);
-        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-      };
-    }
-
-    // ─────────────────────────────
-    // ADD DREAM TO NEXT EMPTY CELL
-    // ─────────────────────────────
     let filledCount = 0;
-    const palList = ['blue','violet','green','warm','pink','red','teal','gold','blue','violet','green','warm','pink','red','teal','gold','blue','violet','green','warm'];
 
-    function addDream(data = {}) {
-      if (filledCount >= TOTAL) return;
-
-      const cell    = cells[filledCount];
-      const seed    = data.seed    || (Date.now() % 999999);
-      const author  = data.author  || 'Anonymous';
-      const time    = data.time    || new Date().toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
-      const palette = data.palette || palList[filledCount % palList.length];
-
-      // Generate + insert canvas
-      const patternCanvas = generatePattern(seed, palette);
-      cell.insertBefore(patternCanvas, cell.firstChild);
-
-      // Update meta
-      const meta = cell.querySelector('.cell-meta');
-      meta.innerHTML = `
-        <span class="cell-author">${author}</span>
-        <span class="cell-time">${time}</span>
-      `;
-
-      cell.classList.remove('empty');
-      cell.classList.add('filled', 'just-added');
-      setTimeout(() => cell.classList.remove('just-added'), 700);
-
-      filledCount++;
-      document.getElementById('countLabel').textContent = filledCount + ' / ' + TOTAL;
-      document.getElementById('liveStatus').textContent =
-        filledCount + (filledCount === 1 ? ' dream' : ' dreams') + ' archived — localhost:3000';
-    }
-
-    // ─────────────────────────────
-    // RASPBERRY PI — CLOUDFLARE TUNNEL
-    // Polls /latest every 4 seconds
-    // When a new dream appears, fetches its thumbnail
-    // and drops it into the next grid cell
-    // ─────────────────────────────
-    const API = 'https://operator-ceo-provisions-also.trycloudflare.com';
-    let lastSeenId = null;
-    let isPolling  = false;
-
-    async function pollLatest() {
-      if (isPolling) return;
-      isPolling = true;
-
-      try {
-        const res  = await fetch(API + '/latest', { cache: 'no-store' });
-        if (!res.ok) { isPolling = false; return; }
-
-        const dream = await res.json();
-
-        // Use id or filename as unique key
-        const dreamId = dream.id || dream.filename || dream.timestamp;
-
-        if (dreamId && dreamId !== lastSeenId) {
-          lastSeenId = dreamId;
-
-          // Build image URL — use thumbnail for speed
-          const imgUrl = dream.thumb_url
-            || dream.thumbnail_url
-            || (API + '/media/thumbs/' + (dream.filename || dream.thumb))
-            || (API + '/media/video/'  + (dream.filename || dream.file));
-
-          addDreamImage(imgUrl, dream);
-        }
-
-        document.getElementById('liveStatus').textContent =
-          'Live — connected to Pi';
-
-      } catch (e) {
-        document.getElementById('liveStatus').textContent =
-          'Waiting for Pi — tunnel may be offline';
-      }
-
-      isPolling = false;
-    }
-
-    // Add a real image from the Pi into the next grid cell
-    function addDreamImage(imgUrl, dream) {
+    // ── ADD IMAGE TO NEXT EMPTY CELL ──
+    function addImageToGrid(imageUrl, filename) {
       if (filledCount >= TOTAL) return;
 
       const cell = cells[filledCount];
-      const time = dream.timestamp
-        ? new Date(dream.timestamp).toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' })
-        : new Date().toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+      const time = new Date().toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
 
       const img = document.createElement('img');
-      img.src = imgUrl;
-      img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;';
-      img.onerror = () => {
-        // If thumb fails, try full image
-        img.src = API + '/media/video/' + (dream.filename || dream.file || '');
-      };
-
+      img.src = imageUrl;
       cell.insertBefore(img, cell.firstChild);
 
       const meta = cell.querySelector('.cell-meta');
@@ -418,8 +216,7 @@
       `;
 
       cell.classList.remove('empty');
-      cell.classList.add('filled', 'just-added');
-      setTimeout(() => cell.classList.remove('just-added'), 700);
+      cell.classList.add('filled');
 
       filledCount++;
       document.getElementById('countLabel').textContent = filledCount + ' / ' + TOTAL;
@@ -427,32 +224,53 @@
         filledCount + (filledCount === 1 ? ' dream' : ' dreams') + ' archived';
     }
 
-    // Load ALL existing dreams from /images on startup
-    async function loadExisting() {
+    // ── GITHUB API POLLING ──
+    const GITHUB_USER   = 'hannahpeevey254';
+    const GITHUB_REPO   = 'ECHO-OF-MIND';
+    const GITHUB_FOLDER = 'images';
+    const POLL_INTERVAL = 10000; // every 10 seconds
+    let knownImages = new Set();
+
+    async function fetchDreamImages() {
       try {
-        const res   = await fetch(API + '/images', { cache: 'no-store' });
-        if (!res.ok) return;
-        const dreams = await res.json();
+        const url      = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${GITHUB_FOLDER}`;
+        const response = await fetch(url, { cache: 'no-store' });
+
+        if (!response.ok) {
+          document.getElementById('liveStatus').textContent = 'Waiting for images folder…';
+          return;
+        }
+
+        const files = await response.json();
+
+        // Only grab generated dream images from the Pi
+        const dreamImages = files.filter(f =>
+          f.name.startsWith('generated_') && f.name.endsWith('.png')
+        );
 
         // Sort oldest first so grid fills in order
-        const sorted = Array.isArray(dreams) ? dreams : (dreams.images || dreams.data || []);
-        sorted.forEach(dream => {
-          const dreamId = dream.id || dream.filename || dream.timestamp;
-          const imgUrl  = dream.thumb_url
-            || dream.thumbnail_url
-            || (API + '/media/thumbs/' + (dream.filename || dream.thumb))
-            || (API + '/media/video/'  + (dream.filename || dream.file));
-          addDreamImage(imgUrl, dream);
-          lastSeenId = dreamId; // track last one loaded
+        dreamImages.sort((a, b) => a.name.localeCompare(b.name));
+
+        dreamImages.forEach(file => {
+          if (!knownImages.has(file.name)) {
+            knownImages.add(file.name);
+            const imageUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/${GITHUB_FOLDER}/${file.name}`;
+            addImageToGrid(imageUrl, file.name);
+          }
         });
 
-      } catch (e) { /* silent */ }
+        if (dreamImages.length === 0) {
+          document.getElementById('liveStatus').textContent = 'Waiting for first dream…';
+        }
+
+      } catch (e) {
+        document.getElementById('liveStatus').textContent = 'Checking for dreams…';
+      }
     }
 
-    // Boot — load existing then start polling
-    loadExisting().then(() => {
-      setInterval(pollLatest, 4000);
-    });
+    // Load on start + poll every 10 seconds
+    fetchDreamImages();
+    setInterval(fetchDreamImages, POLL_INTERVAL);
   </script>
 </body>
 </html>
